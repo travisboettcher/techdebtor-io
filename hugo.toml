@@ -1,0 +1,33 @@
+baseURL = "https://techdebtor.io/"
+languageCode = "en-us"
+title = "The Tech Debtor"
+enableRobotsTXT = true
+enableEmoji = true
+pygmentsUseClasses = true
+
+[taxonomies]
+  tag = "tags"
+
+[markup]
+  [markup.highlight]
+    noClasses = false
+    codeFences = true
+    guessSyntax = true
+    lineNos = false
+  [markup.goldmark.renderer]
+    unsafe = true
+
+[params]
+  description = "Creating tech debt for future generations."
+
+[[menu.main]]
+  identifier = "posts"
+  name = "Posts"
+  url = "/posts/"
+  weight = 10
+
+[[menu.main]]
+  identifier = "tags"
+  name = "Tags"
+  url = "/tags/"
+  weight = 20

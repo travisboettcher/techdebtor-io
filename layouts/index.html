@@ -1,0 +1,16 @@
+{{ define "main" }}
+<section class="intro">
+  <p>{{ .Site.Params.description }}</p>
+</section>
+
+<section class="post-list">
+  {{ $posts := where .Site.RegularPages "Section" "posts" }}
+  {{ range $posts }}
+    <article class="post-summary">
+      <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+      <p>{{ .Summary }}</p>
+    </article>
+  {{ end }}
+</section>
+{{ end }}

@@ -1,8 +1,11 @@
 <header class="site-header">
   <a class="site-title" href="{{ "/" | absURL }}">{{ .Site.Title }}</a>
-  <nav class="site-nav">
-    {{ range .Site.Menus.main }}
-      <a href="{{ .URL | absURL }}">{{ .Name }}</a>
-    {{ end }}
-  </nav>
+  <div class="header-right">
+    <nav class="site-nav">
+      {{ range .Site.Menus.main }}
+        <a href="{{ .URL | absURL }}">{{ .Name }}</a>
+      {{ end }}
+    </nav>
+    <button id="theme-toggle" type="button" aria-label="Toggle dark/light theme">◑</button>
+  </div>
 </header>

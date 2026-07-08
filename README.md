@@ -4,26 +4,29 @@ Hugo source for [techdebtor.io](https://techdebtor.io) — *The Tech Debtor* blo
 
 ## Status
 
-This repo currently holds a Hugo scaffold with a small custom theme (no
-external theme dependency) and a CI build-check workflow. It does not yet:
+This repo holds the full real content archive (10 posts + About page,
+migrated from a Ghost export) on a hand-rolled Hugo theme built to match the
+original Ghost site's style guide (nav, read time, tag badges, dark/light
+toggle). It does not yet:
 
 - Serve any real traffic — techdebtor.io is currently powered by Ghost
   (self-hosted, in the `homelab-infrastructure` repo). A separate,
   abandoned side project (`techdebtor-site`) also exists but never replaced
   Ghost in production and isn't authoritative for content or design.
-- Contain the real blog archive. Only one post is migrated so far
-  (`content/posts/hello-world.md`), carried over from `techdebtor-site`'s
-  Ghost-export attempt as a placeholder/starting point. Its body still
-  describes that earlier (non-live) migration attempt and will need an
-  editorial pass once the real Ghost content is available.
 - Deploy anywhere. CI only builds and uploads an artifact for inspection.
+
+Known gaps: no images were part of the export, so bracketed placeholders
+(e.g. `*(embedded Spotify podcast episode)*`) remain as literal text rather
+than real embeds/photos. No LinkedIn URL is set in `hugo.toml` — only GitHub
+was confirmed, so the footer omits it until a real URL is supplied.
 
 ### Roadmap
 
 - [x] Hugo site scaffolded with a minimal custom theme
 - [x] CI build-check workflow
-- [ ] Migrate the real Ghost archive (blocked on getting the actual export
-      or content — not reachable from this environment)
+- [x] Migrate the real Ghost archive (10 posts + About page)
+- [x] Theme parity with the Ghost "Smart" theme's style guide (nav, read
+      time, tag badges, dark/light toggle)
 - [ ] Deployment pipeline (build + deploy to the homelab, replacing Ghost) —
       will live in `homelab-infrastructure`, in a future task
 

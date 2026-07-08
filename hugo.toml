@@ -22,6 +22,7 @@ pygmentsUseClasses = true
   author = "Travis Boettcher"
   resumeURL = "https://resume.techdebtor.io/"
   githubURL = "https://github.com/travisboettcher"
+  linkedinURL = "https://www.linkedin.com/in/travisboettcher/"
 
 [[menu.main]]
   identifier = "home"

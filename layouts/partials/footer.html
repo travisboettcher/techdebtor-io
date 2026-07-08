@@ -3,6 +3,7 @@
     <a href="{{ "/about/" | absURL }}">About</a>
     {{ with .Site.Params.resumeURL }}· <a href="{{ . }}">Resume</a>{{ end }}
     {{ with .Site.Params.githubURL }}· <a href="{{ . }}">GitHub</a>{{ end }}
+    {{ with .Site.Params.linkedinURL }}· <a href="{{ . }}">LinkedIn</a>{{ end }}
     · <a href="{{ "index.xml" | absURL }}">RSS</a>
   </p>
   <p>&copy; {{ now.Year }} {{ .Site.Params.author | default .Site.Title }}</p>

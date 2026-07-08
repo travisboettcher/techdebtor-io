@@ -17,8 +17,7 @@ toggle). It does not yet:
 
 Known gaps: no images were part of the export, so bracketed placeholders
 (e.g. `*(embedded Spotify podcast episode)*`) remain as literal text rather
-than real embeds/photos. No LinkedIn URL is set in `hugo.toml` — only GitHub
-was confirmed, so the footer omits it until a real URL is supplied.
+than real embeds/photos.
 
 ### Roadmap
 

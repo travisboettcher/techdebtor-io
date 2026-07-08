@@ -1,3 +1,10 @@
 <footer class="site-footer">
-  <p>&copy; {{ now.Year }} {{ .Site.Title }}. <a href="{{ "index.xml" | absURL }}">RSS</a></p>
+  <p>
+    <a href="{{ "/about/" | absURL }}">About</a>
+    {{ with .Site.Params.resumeURL }}· <a href="{{ . }}">Resume</a>{{ end }}
+    {{ with .Site.Params.githubURL }}· <a href="{{ . }}">GitHub</a>{{ end }}
+    · <a href="{{ "index.xml" | absURL }}">RSS</a>
+  </p>
+  <p>&copy; {{ now.Year }} {{ .Site.Params.author | default .Site.Title }}</p>
 </footer>
+<script src="{{ "js/theme-toggle.js" | relURL }}"></script>

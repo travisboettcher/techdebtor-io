@@ -19,15 +19,18 @@ pygmentsUseClasses = true
 
 [params]
   description = "Creating tech debt for future generations."
+  author = "Travis Boettcher"
+  resumeURL = "https://resume.techdebtor.io/"
+  githubURL = "https://github.com/travisboettcher"
 
 [[menu.main]]
-  identifier = "posts"
-  name = "Posts"
-  url = "/posts/"
+  identifier = "home"
+  name = "Home"
+  url = "/"
   weight = 10
 
 [[menu.main]]
-  identifier = "tags"
-  name = "Tags"
-  url = "/tags/"
+  identifier = "about"
+  name = "About"
+  url = "/about/"
   weight = 20

@@ -8,7 +8,11 @@
   {{ range $posts }}
     <article class="post-summary">
       <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+      <p class="post-meta">
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+        <span>{{ .ReadingTime }} min read</span>
+        {{ with .Params.tags }}<a class="badge" href="{{ "/tags/" | relLangURL }}{{ index . 0 | urlize }}/">{{ index . 0 }}</a>{{ end }}
+      </p>
       <p>{{ .Summary }}</p>
     </article>
   {{ end }}

@@ -2,6 +2,7 @@
 title: "Directing Traefik"
 date: 2023-09-02
 tags: ["Home Lab"]
+hero_image: "https://images.unsplash.com/photo-1465447142348-e9952c393450?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 So - you've set up some fancy new service on your home server that will let you digitize and get rid of that pile of papers that keeps stacking up on top of your file cabinet (instead of actually filing the papers - yay procrastination!). The problem: you can only access said service on `192.168.0.37:8234`. Oh, and now you have 7 other services that you also need to remember the IP and port for.

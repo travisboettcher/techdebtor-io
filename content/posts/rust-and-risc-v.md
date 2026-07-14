@@ -2,6 +2,7 @@
 title: "Rust and RISC-V Ramblings"
 date: 2023-10-10
 tags: ["Rust"]
+hero_image: "https://images.unsplash.com/photo-1643191192340-6f23b16ecadd?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 I started my programming career with pretty run-of-the-mill programming languages - C++, Java, Python. Then, one of my professors had a challenge for the class: complete the assignment in Haskell. I was curious, so I jumped in - and loved it! I hadn't realized there could be such a vastly different way of thinking about programming, and this set me on a path to continuously dabble in random languages.

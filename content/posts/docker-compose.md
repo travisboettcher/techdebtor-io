@@ -2,6 +2,7 @@
 title: "Managing Containers with Docker Compose"
 date: 2023-09-27
 tags: ["Home Lab"]
+hero_image: "https://images.unsplash.com/photo-1604506522146-316c8bedd874?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 My homelab current consists of about 50 services - 30 or so exposed through Traefik, and then roughly 20 backing services (databases, etc). All of those services run in Docker; all have different lifecycles, requirements, start-up scripts. If I were using barebones Docker, I would probably have 50 scripts lying around to maintain those containers. Instead, I use [Docker Compose](https://docs.docker.com/compose/).

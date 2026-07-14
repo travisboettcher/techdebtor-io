@@ -1,6 +1,7 @@
 ---
 title: "What do I want to be when I grow up?"
 date: 2023-09-20
+hero_image: "https://images.unsplash.com/photo-1463680942456-e4230dbeaec7?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 Let me tell you a story - it's not that unique, but hey, this is my blog and I can write what I want! All through primary and high school, I was told I excelled at math. I would get special worksheets and lessons; I took advanced classes in high school; I took part in a Math Bowl (if you have to ask, you're not cool enough). Because of all of this reenforcement, I spent most of my teenage years pretty much set on going to college for Math. I didn't know what I was going to do with that degree, but that was a problem for Future Travis.

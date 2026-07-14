@@ -1,6 +1,7 @@
 ---
 title: "Teaching My Second Brain to Talk Back"
 date: 2026-07-06
+hero_image: "https://images.unsplash.com/photo-1762330470070-249e7c23c8c0?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 *Part 1 of a series on wiring my Obsidian vault into Claude.*

@@ -2,6 +2,7 @@
 title: "Home Sweet Homelab"
 date: 2023-06-06
 tags: ["Home Lab"]
+hero_image: "https://images.unsplash.com/photo-1521542464131-cb30f7398bc6?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 A few months ago, I really got into the idea of automating my home and monitoring my energy usage. I had previously done some automation and integration of my smart devices, but it was mostly through the respective apps - there wasn't much automation across brands or products.

@@ -1,5 +1,5 @@
 baseURL = "https://techdebtor.io/"
-languageCode = "en-us"
+locale = "en-us"
 title = "The Tech Debtor"
 enableRobotsTXT = true
 enableEmoji = true

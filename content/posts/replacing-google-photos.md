@@ -2,6 +2,7 @@
 title: "Replacing Google Photos"
 date: 2023-10-18
 tags: ["Home Lab"]
+hero_image: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 One of my goals as I've been working on my homelab has been to replace Google Photos. For me, there have been main reasons to find an alternative:

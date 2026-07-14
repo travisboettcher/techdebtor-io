@@ -1,19 +1,21 @@
 {{ define "main" }}
-<section class="intro">
-  <p>{{ .Site.Params.description }}</p>
-</section>
-
 <section class="post-list">
   {{ $posts := where .Site.RegularPages "Section" "posts" }}
   {{ range $posts }}
-    <article class="post-summary">
-      <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-      <p class="post-meta">
-        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
-        <span>{{ .ReadingTime }} min read</span>
-        {{ with .Params.tags }}<a class="badge" href="{{ "/tags/" | relLangURL }}{{ index . 0 | urlize }}/">{{ index . 0 }}</a>{{ end }}
-      </p>
-      <p>{{ .Summary }}</p>
+    {{ $post := . }}
+    <article class="post-card">
+      {{ with .Params.hero_image }}
+        <a class="post-card-image-link" href="{{ $post.RelPermalink }}">
+          <img class="post-card-image" src="{{ . }}" alt="{{ $post.Title }}" loading="lazy">
+        </a>
+      {{ end }}
+      <div class="post-card-content">
+        <h2><a class="post-title-link" href="{{ $post.RelPermalink }}">{{ $post.Title }}</a></h2>
+        <p class="post-meta">
+          <time datetime="{{ $post.Date.Format "2006-01-02" }}">{{ $post.Date.Format "January 2, 2006" }}</time>
+          <span>{{ $post.ReadingTime }} min read</span>
+        </p>
+      </div>
     </article>
   {{ end }}
 </section>

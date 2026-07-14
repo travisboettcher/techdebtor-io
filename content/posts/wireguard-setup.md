@@ -2,6 +2,7 @@
 title: "How I access my home network"
 date: 2023-07-09
 tags: ["Home Lab"]
+hero_image: "https://images.unsplash.com/photo-1543946602-a0fce8117697?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 One of the projects I've wanted to tackle for a long time was to implement a way to access my home network from anywhere. There are a bunch of ways to tackle this, including just port forwarding at the router. However, I had a few requirements:

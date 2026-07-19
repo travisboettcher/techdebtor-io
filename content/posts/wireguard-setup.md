@@ -109,4 +109,4 @@ In a future post, I'll discuss my Traefik setup, which allows me to selectively 
 
 Occasionally, I'll throw something at the bottom of posts, highlighting some recommendation to read, listen to, or play. For this post, I'm including **What Matters Most** by Ben Folds. Since it was released, the album has been playing on repeat around the house.
 
-*(embedded Spotify album)*
+<iframe style="border-radius:12px" width="100%" height="352" title="Spotify Embed: What Matters Most" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" src="https://open.spotify.com/embed/album/5Jshp99HBceJEaAeyre8Pr?utm_source=oembed"></iframe>

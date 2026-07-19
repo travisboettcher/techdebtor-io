@@ -1,6 +1,7 @@
 ---
 title: "Homelab DNS Configuration"
 date: 2025-08-09
+hero_image: "https://images.unsplash.com/photo-1762163516269-3c143e04175c?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 I've previously discussed [how I route external traffic to my homelab](/posts/wireguard-setup/) and [how I route traffic that has reached my homelab](/posts/traefik-setup/). One outstanding issue was the following: I wanted to be able to have internal-only resources, accessible only locally or through a VPN, along side my externally visible resources (like this blog!). In addition to the privacy of internal-only resources, I wanted to reduce traffic through my VPS. One example is Jellyfin - I didn't want local traffic to route out to my VPS, only to be routed back to my homelab to stream movies.

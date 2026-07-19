@@ -1,7 +1,7 @@
 ---
 title: "A Vault That Talks Back"
 date: 2026-07-07
-draft: true
+draft: false
 hero_image: "https://images.unsplash.com/photo-1519337265831-281ec6cc8514?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 

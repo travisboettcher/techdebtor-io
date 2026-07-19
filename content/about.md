@@ -1,6 +1,6 @@
 ---
 title: "About"
-layout: "page"
+layout: "staticpage"
 ---
 
 I've been a software engineer for over ten years, working mainly with Java. In my spare time, I like to dabble - tinker with ideas, learn new technologies, start projects. I am very bad at finishing any of those.

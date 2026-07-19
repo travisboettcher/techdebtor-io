@@ -126,4 +126,4 @@ There are many other small tricks I've come across, but what I've covered above 
 
 There are a bunch of podcasts I want to recommend, but today I'll highlight what is definitely my favorite: A Problem Squared. Two comedians take peoples' problems and try to provide a solution - sometimes the solution is even decent! Every episode brings me so much joy, and I immediately move new episodes to the top of my queue.
 
-*(embedded Spotify podcast show)*
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/show/7Hp5QDk9PsWyEXtcsDz34a?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>

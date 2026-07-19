@@ -35,4 +35,4 @@ In the last year or so, there has been a huge surge in interest in AI, and speci
 
 The one I want to highlight today is [Data Skeptic](https://dataskeptic.com/). In the latest season, entitled "Machine Intelligence", the host Kyle Polich talks with various experts in the field. Each guest brings a unique perspective and some really interesting research is discussed - both pushing the boundaries of technologies like LLMs, and highlighting the dangers of putting too much trust and rushing too quickly to market with those same ill-understood technologies.
 
-*(embedded Spotify podcast episode)*
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/5QiSS2QjWRtNs9DJBtMSx2?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>

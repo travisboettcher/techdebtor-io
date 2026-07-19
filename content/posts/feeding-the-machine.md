@@ -1,7 +1,7 @@
 ---
-title: "Second Brain Series — Post 2: Feeding the Machine"
+title: "Feeding the Machine"
 date: 2026-07-12
-hero_image: "https://images.unsplash.com/photo-OLvQEjwCSVI?w=800&h=400&fit=crop&auto=format&q=80"
+hero_image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 *Part 2 of a series on wiring my Obsidian vault into Claude. [Part 1](/posts/teaching-my-second-brain-to-talk-back/)*

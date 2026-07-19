@@ -1,5 +1,8 @@
 {{ define "main" }}
 <article class="post">
+  {{ with .Params.hero_image }}
+    <img class="post-hero-image" src="{{ . }}" alt="{{ $.Title }}">
+  {{ end }}
   <header class="post-header">
     <h1 class="post-title-link">{{ .Title }}</h1>
     <p class="post-meta">

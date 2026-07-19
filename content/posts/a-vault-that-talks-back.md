@@ -1,8 +1,8 @@
 ---
-title: "Second Brain Series — Post 3: A Vault That Talks Back"
+title: "A Vault That Talks Back"
 date: 2026-07-07
 draft: true
-hero_image: "https://images.unsplash.com/photo-sWRPYgjpygQ?w=800&h=400&fit=crop&auto=format&q=80"
+hero_image: "https://images.unsplash.com/photo-1519337265831-281ec6cc8514?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 *Part 3 of a series on wiring my Obsidian vault into Claude. [Part 1](/posts/teaching-my-second-brain-to-talk-back/) · [Part 2](/posts/feeding-the-machine/)*

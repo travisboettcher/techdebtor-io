@@ -1,8 +1,8 @@
 ---
-title: "Second Brain Series — Post 4: The Agent That Tidies While I Sleep"
+title: "The Agent That Tidies While I Sleep"
 date: 2026-07-07
 draft: true
-hero_image: "https://images.unsplash.com/photo-w01gB_vXGNY?w=800&h=400&fit=crop&auto=format&q=80"
+hero_image: "https://images.unsplash.com/photo-1667264501379-c1537934c7ab?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 *Part 4 of a series on wiring my Obsidian vault into Claude. [Part 1](/posts/teaching-my-second-brain-to-talk-back/) · [Part 2](/posts/feeding-the-machine/) · [Part 3](/posts/a-vault-that-talks-back/)*

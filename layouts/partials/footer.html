@@ -5,6 +5,11 @@
     {{ with .Site.Params.githubURL }}· <a href="{{ . }}">GitHub</a>{{ end }}
     {{ with .Site.Params.linkedinURL }}· <a href="{{ . }}">LinkedIn</a>{{ end }}
     · <a href="{{ "index.xml" | absURL }}">RSS</a>
+    · <a href="{{ "/privacy/" | absURL }}">Privacy</a>
+  </p>
+  <p class="footer-note">
+    This site uses cookie-less, privacy-friendly analytics.
+    <a href="{{ "/privacy/" | absURL }}">Learn more</a>.
   </p>
   <p>&copy; {{ now.Year }} {{ .Site.Params.author | default .Site.Title }}</p>
 </footer>

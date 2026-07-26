@@ -1,7 +1,7 @@
 ---
 title: "The Agent That Tidies While I Sleep"
-date: 2026-07-07
-draft: true
+date: 2026-07-26
+draft: false
 hero_image: "https://images.unsplash.com/photo-1667264501379-c1537934c7ab?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 

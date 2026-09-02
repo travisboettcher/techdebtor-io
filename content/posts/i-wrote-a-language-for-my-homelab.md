@@ -3,44 +3,37 @@ title: "I Wrote a Language for My Homelab"
 date: 2026-09-02
 draft: true
 tags: ["Home Lab", "Rust"]
-summary: "Standing up service number 51 meant copy-pasting the same Compose block and Traefik labels for the 51st time. So I audited all 33 of them, found what three years of copy-paste actually did to my homelab, and wrote a compiler."
 ---
 
 *Part 1 of a series on `hll`, a small language that compiles to Docker Compose.*
 
-Three years ago I wrote about [managing containers with Docker Compose](/posts/docker-compose/) and [pointing Traefik at them](/posts/traefik-setup/). Both posts hold up fine. What neither of them mentions is what the process actually feels like by the time you're standing up service number 51.
+Three years ago I wrote about [managing containers with Docker Compose](/posts/docker-compose/) and [pointing Traefik at them](/posts/traefik-setup/), and honestly, both of those posts are still more or less how I do things. What neither of them mentions is what the process actually feels like by the time you're standing up your fifty-somethingth service: you copy the last `docker-compose.yml` you wrote, change the image and the port and the subdomain and the volume path, delete the bits that don't apply, keep the Traefik labels but rename the router in all three of them, and then `docker compose up -d` and hope. That's not really configuration — it's transcription, and I've done it by hand, from memory, thirty-odd times.
 
-It feels like this: copy the last `docker-compose.yml` you wrote. Change the image. Change the port. Change the subdomain. Change the volume path. Delete the bits that don't apply. Keep the Traefik labels, but rename the router in all three of them. Save, `docker compose up -d`, hope.
+### The audit I should have done ages ago
 
-That's not configuration. That's transcription — and I've been doing it by hand, from memory, roughly fifty times.
+Before writing a single line of code, I sat down and read all 33 of my `docker-compose.yml` files start to finish, in one go. It turned up two different problems, and I've come around to thinking the second one matters a lot more than the first.
 
-### The audit
+**Problem one: things that are just broken.** Three of them, all live, all doing nothing — two of them silently.
 
-Before writing a single line of code, I did something I probably should have done years earlier: I read all 33 of my `docker-compose.yml` files, start to finish, in one sitting.
+- `treafik.http.routers.status-pages.priority=1` — I misspelled `traefik`. Traefik only reads labels under the `traefik.` prefix, so a misspelled one never gets read at all, and nothing anywhere warns you.
+- `traefiki.docker.network=docker_default` — same class of typo, different service. (Two different misspellings of the same word. I'd love to claim there's a system.)
+- `traefik.docker.network=docker_local` — spelled correctly, but pointing at a network that doesn't exist anywhere in the repo. That one works today purely by luck: `hass` only sits on one network, so Traefik never actually needs the hint it's failing to give.
 
-It turned up two different problems, and I've come to think the second one matters much more than the first.
-
-**Problem one: things that are simply broken.** Three of them, all live, all silently doing nothing:
-
-- `treafik.http.routers.status-pages.priority=1` — `traefik` misspelled. Traefik reads labels by prefix, so a misspelled prefix isn't an error, it's just a label about nothing.
-- `traefiki.docker.network=docker_default` — same class of typo, different service.
-- `traefik.docker.network=docker_local` — spelled right, but pointing at a network that doesn't exist anywhere in the repo. That one works today purely by luck: the service in question only sits on one network, so Traefik never needs the hint it's failing to give.
-
-Three years of these sitting in my config, and nothing anywhere told me. YAML is a data format. It has no opinion about whether the keys mean anything.
+These had been sitting in my config for who knows how long, and nothing ever told me. YAML will happily hold a key that means nothing at all.
 
 **Problem two: the same job, done five different ways.** This is the one that actually bothered me.
 
-Copy-paste doesn't just spread mistakes. It spreads *whichever version you happened to copy from that day*. So my fleet has strata, like rock. About half the files still carry the deprecated top-level `version: '3'` key. About half set `container_name`, with no rule I can reconstruct for which. Roughly a third set custom `dns` overrides. One service still has a `links:` directive, which Compose made redundant years ago. A couple publish ports directly instead of going through Traefik, which looks like debugging I forgot to undo.
+Copy-paste doesn't just spread mistakes, it spreads whichever version you happened to copy from that day. So my fleet has layers, and you can pretty much date a file by which conventions it uses. About half of them still carry the deprecated top-level `version: '3.x'` key. About half set `container_name`, with no rule I can reconstruct for which ones. Roughly a third set custom `dns` overrides. One still has a `links:` directive, which Compose made redundant years ago (`vikunja`, I'm looking at you). Two publish ports directly for no reason I can find, which looks like debugging I forgot to undo.
 
-And the one that isn't cosmetic: some of my services declare `depends_on` and wait only for the dependency's *container* to start, while others properly wait for its healthcheck to pass. Gitea, Wallabag, and AdventureLog are in the first group. n8n, Sharry, Wanderer, Authentik, and Miniflux are in the second. Same intent, two behaviors, and the first group has a startup race quietly sitting in it waiting for a slow reboot.
+And then the one that isn't cosmetic: some of my services declare `depends_on` and wait only for the dependency's *container* to start, while others properly wait for its healthcheck to pass. Gitea, Wallabag and AdventureLog are in the first group. n8n, Sharry, Wanderer, Authentik and Miniflux are in the second. Same intent, two different behaviors, and the first group has a startup race quietly sitting in it waiting for a slow reboot to find it.
 
-Every one of those is a decision I made once, correctly, and then failed to propagate to the other 32 files. There is no amount of being careful that fixes this. The problem is that "the right way to do this" lives in my head and gets re-typed every time.
+Every one of those is a decision I made once, correctly, and then never propagated to the other 32 files. I don't think I can careful my way out of that one. The right way to do things lives in my head, and it gets re-typed from scratch every single time.
 
 ### So I wrote a compiler
 
-The thing I wanted was to describe what's *different* about a service and let something else generate the parts that are always the same. So: a small language, `hll` — short for **H**ome**L**ab **L**anguage, pronounced exactly how it looks — and a compiler, `hllc`, that turns it into Compose YAML with Traefik labels attached.
+What I wanted was to describe what's actually *different* about a service and let something else generate the parts that are always the same. So: a small language called `hll` — HomeLab Language, pronounced exactly how it looks — and a compiler, `hllc`, that turns it into Compose YAML with the [Traefik](https://traefik.io/traefik/) labels already attached.
 
-Here is a real service, in full:
+Here's an entire service:
 
 ```
 service jellyfin {
@@ -52,7 +45,7 @@ service jellyfin {
 }
 ```
 
-And here is what `hllc build` makes of it, verbatim:
+And here's what `hllc build` makes of it, verbatim:
 
 ```yaml
 # Generated by hllc—do not edit.
@@ -72,43 +65,47 @@ services:
     - traefik.http.services.jellyfin.loadbalancer.server.port=8096
 ```
 
-The important part isn't that it's shorter. It's that **I never typed the word `traefik`.** The router rule and the load balancer port are derived from `expose 8096 as "media.techdebtor.io"`. There's no label string for me to misspell, because there's no label string.
+The important part isn't that it's shorter. It's that I never typed the word `traefik` anywhere in the input — the router rule and the load balancer port are both derived from that one `expose ... as` line. There's nothing for me to misspell, because I'm not writing the label at all.
 
-It's a transpiler, not an interpreter — no evaluation, no runtime, no state. It reads a file and writes a Compose file. What comes out the other end is ordinary YAML you can read, check into git, and `docker compose up` without `hllc` being anywhere nearby.
+There's no runtime here and nothing clever going on: `hllc` reads a file and writes a Compose file. What comes out is ordinary YAML I can read, check into git, and run without `hllc` being anywhere nearby.
 
-For the divergence problem, there's a `defaults` block: a template that gets applied to every service automatically, and loses to anything a service says for itself. `restart unless-stopped` lives there now, once, instead of in 33 files. When I change my mind about a fleet-wide convention, I change it in one place.
+For the divergence problem there's a `defaults` block — a template applied to every service automatically, which quietly loses to anything a service says for itself. `restart unless-stopped` lives in there once, instead of getting retyped in every file, and when I change my mind about a fleet-wide convention I change it in one place.
 
-### What it catches
+### What it actually catches
 
-The typo class from the audit mostly stops being possible, and where it's still possible, it's now an error instead of a shrug. Misspell a field and the compiler says so:
+Misspell a field name and you get told about it:
 
 ```
 typo.hll: 4:3: unknown field "treafik" on `service` — if `treafik` is a
 Compose key with no `hll` field yet, pass it through with `raw { treafik: ... }`
 ```
 
-Point a service at a network I never declared — the third bug from the audit — and it doesn't get to be lucky:
+Point a service at a network I never declared — the same shape as the third bug from my audit — and it doesn't get to be lucky:
 
 ```
-undeclared.hll:3:13: service `hass` references undeclared network `docker-local`
+hass.hll:3:13: service `hass` references undeclared network `docker_local`
 ```
 
-Both exit non-zero, which means `hllc check` is something I can put in CI and have it actually stop me.
+Both of those exit non-zero, which is the part I actually care about. `hllc check` runs the whole pipeline, writes nothing, and returns a failure, so I can drop it in CI and have it stop me.
 
 ### In the spirit of this blog
 
-This is not a finished product, so here's the honest status.
+The honest status, then.
 
-`hll` has a `raw` escape hatch and a passthrough `labels` block for Compose keys the language doesn't model yet, and **anything I write in those is unvalidated by definition**. I confirmed this by feeding it the exact `treafik...priority` typo from my audit inside a `labels` block. It compiled fine and put the typo straight through to the output. The compiler eliminated the *class* of bug for everything it models; it did not make me smarter.
+`hll` has a `raw` escape hatch for Compose keys the language doesn't model yet, plus a `labels` block for Docker labels it can't spell on its own. Both do check *structure* — duplicate keys, collisions with a label the compiler already generated — but neither has any opinion about whether a key *means* anything. I know this because I fed it the exact `treafik...priority` typo from my audit, inside a `labels` block, and it compiled clean and passed the typo straight through to the output. The escape hatch is exactly as careful as I am, which is not very.
 
-Similarly, `depends_on` doesn't magically fix my startup race. `hll` makes me write the condition explicitly — `depends_on [db { condition: service_healthy }]` — and validates that I spelled it correctly. It doesn't guess. I decided I'd rather have that be visible than clever, and I'm still not certain that was the right call.
+`depends_on` doesn't fix my startup race either. A bare `depends_on [db]` still just means "wait for the container to start," same as it always has in Compose. Health-gating is something I have to write out — `depends_on [db { condition: service_healthy }]` — and the compiler will check that I spelled the condition right, but it won't guess that I wanted it. (I went back and forth on whether it should guess. Ask me again in six months.)
 
-Also: it only runs on Linux x86-64, and it's version 0.34, which is a number that means "not done."
+Also: it's only tested and supported on Linux x86-64, and it's on version 0.34, which is a number that means *not done*.
 
-### Where this is going
+### Where this series is going
 
-The rest of this series gets into the parts I found most interesting to build: what the language actually looks like to write, what's inside the compiler (the whole lexer → parser → codegen pipeline, which turns out to be far more approachable than I expected), and then the two AI posts — how the language was deliberately designed for Claude to write, and what building 33,000 lines of Rust with an agent in about three weeks actually looked like, including where that got uncomfortable.
+The rest of these posts get into the parts I found most interesting to build — what the language actually looks like to write, and what's inside the compiler (the whole lexer → parser → codegen pipeline, which turned out to be much more approachable than I'd assumed). Then two on the AI side: how the language was deliberately designed for Claude to write, and what building 33,000 lines of Rust with an agent in under three weeks actually looked like, including the bits where that got uncomfortable.
 
-The rabbit hole has no bottom. It just keeps changing what layer it's on.
+If you want to poke at it, or just see how questionable my Rust is, it's all up at [github.com/travisboettcher/hl-lang](https://github.com/travisboettcher/hl-lang).
 
-Until next time — happy homelabbing.
+Until then — happy compiling.
+
+---
+
+*This post was written with the help of Claude — which also wrote a good deal of the compiler it's about. More on that in a couple of posts.*

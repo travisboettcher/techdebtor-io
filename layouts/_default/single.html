@@ -17,6 +17,11 @@
       </ul>
     {{ end }}
   </header>
+  {{ with .Params.archive_url }}
+    <div class="archive-notice">
+      Originally published on <strong>{{ $.Params.archive_source | default "an earlier site" }}</strong>, which is no longer online — recovered from the <a href="{{ . }}" target="_blank" rel="noopener">Wayback Machine</a>.
+    </div>
+  {{ end }}
   <div class="post-content">
     {{ .Content }}
   </div>

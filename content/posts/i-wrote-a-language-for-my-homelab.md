@@ -11,23 +11,23 @@ Here's what neither of those posts mentions. By the time you're standing up your
 
 ### The audit I should have done ages ago
 
-Before writing a single line of code, I sat down and read all 33 of my `docker-compose.yml` files start to finish. It turned up two different problems, and the second one bothers me a lot more than the first.
+Before I wrote a single line of code, I sat down and read all 33 of my `docker-compose.yml` files start to finish - which took me an evening and a pot of coffee. I turned up two different problems, and the second one bothers me a lot more than the first.
 
 **First, the things that are just broken.** Three of them, all live, all doing nothing - and two of them doing nothing silently:
 
-- `treafik.http.routers.status-pages.priority=1`. I misspelled `traefik`. Traefik only reads labels under the `traefik.` prefix, so a misspelled one never gets read at all, and nothing anywhere warns you.
+- `treafik.http.routers.status-pages.priority=1`. I misspelled `traefik`. Traefik only reads labels under the `traefik.` prefix, so I had written a label nothing would ever read, and nothing anywhere warned me.
 - `traefiki.docker.network=docker_default`. Same class of typo, different service. Two different misspellings of the same word (I'd love to claim there's a system).
-- `traefik.docker.network=docker_local`. Spelled right, but pointing at a network that doesn't exist anywhere in the repo. That one works today purely by luck: `hass` only sits on one network, so Traefik never actually needs the hint it's failing to give.
+- `traefik.docker.network=docker_local`. Spelled right, but I pointed it at a network that doesn't exist anywhere in the repo. It works today purely by luck: `hass` only sits on one network, so Traefik never actually needs the hint I'm failing to give it.
 
-These had been sitting in my config for who knows how long, and nothing ever told me. YAML will happily hold a key that means nothing at all.
+Those had been sitting in my config for who knows how long, and nothing ever told me about any of them. YAML will happily hold a key that means nothing whatsoever!
 
 **Second, the same job done five different ways.** This is the one that actually bothers me.
 
-Copy-paste doesn't just spread mistakes, it spreads whichever version you happened to copy from that day - so my fleet has layers, and you can very nearly date a file by which conventions it uses. About half of them still carry the deprecated top-level `version: '3.x'` key; about half set `container_name`, with no rule I can reconstruct for which ones; roughly a third set custom `dns` overrides (I know why a couple of them do, and the rest are a mystery to me). One still has a `links:` directive, which Compose made redundant years ago ([`vikunja`](https://vikunja.io/), I'm looking at you!). Two publish ports directly for no reason I can find, which looks an awful lot like debugging I forgot to undo.
+Copy-paste doesn't just spread mistakes, it spreads whichever version I happened to copy from that day - so my fleet has layers, and I can very nearly date a file by which conventions it uses. About half still carry the deprecated top-level `version: '3.x'` key. About half set `container_name`, with no rule I can reconstruct. Roughly a third set custom `dns` overrides (I know why a couple of them do; the rest are a mystery to me). One still has a `links:` directive, which Compose made redundant years ago ([`vikunja`](https://vikunja.io/), I'm looking at you!). Two publish ports directly for no reason I can find, which looks an awful lot like debugging I forgot to undo.
 
 And then the one that isn't cosmetic. Some of my services declare `depends_on` and wait only for the dependency's container to start, while others properly wait for its healthcheck to pass. [Gitea](https://about.gitea.com/), [Wallabag](https://www.wallabag.it/en) and AdventureLog are in the first group; [n8n](https://n8n.io/), Sharry, Wanderer, [Authentik](https://goauthentik.io/) and [Miniflux](https://miniflux.app/) are in the second. Same intent, two different behaviors, and a startup race sitting in the first group that I have so far only been lucky enough to avoid.
 
-Every one of those is a decision I made once, correctly, and then never propagated to the other 32 files. The right way to do things lives in my head, and it gets re-typed from scratch every single time.
+Every one of those is a decision I made once, correctly, and then never carried over to my other 32 files. The right way to do things lives in my head, and I re-type it from scratch every single time.
 
 ### So I wrote a compiler
 
@@ -67,7 +67,7 @@ services:
 
 The best part of that output is what isn't in the input. I never typed the word `traefik` at all! The router rule and the load balancer port both fall out of that one `expose ... as` line, so there's nothing left for me to misspell.
 
-I didn't build anything clever here, either. `hllc` reads a file and writes a Compose file, and that's about it. What comes out the other end is ordinary YAML that I can read, check into git, and run without `hllc` being anywhere nearby.
+I didn't build anything clever here, either - `hllc` reads a file and writes a Compose file, and that's about it. What comes out the other end is ordinary YAML that I can read, check into git, and run without `hllc` being anywhere nearby, which was the one thing I refused to compromise on!
 
 For the divergence problem there's a `defaults` block, a template that gets applied to every service automatically and always loses to anything a service says for itself. `restart unless-stopped` lives in there once instead of getting retyped in every service, so when I change my mind about a convention, I change it in one place.
 
@@ -86,7 +86,7 @@ Point a service at a network I never declared - the same shape as the third bug 
 hass.hll:3:13: service `hass` references undeclared network `docker_local`
 ```
 
-Both of those exit non-zero, which is the part I actually care about. `hllc check` runs the whole pipeline, writes nothing, and returns a failure, so I can drop it into CI and have it stop me.
+Both of those exit non-zero, which is the part I actually care about - I can drop `hllc check` into CI and have it stop me before I deploy something silly.
 
 ### What it doesn't do
 
@@ -103,14 +103,14 @@ Still on my plate:
 
 ### Where this series is going
 
-The next few posts get into the parts I found most interesting to build:
+The next few posts get into the parts I most enjoyed building:
 
-- what the language actually looks like to write;
-- what's inside the compiler - I'll leave what a lexer is to better writers than me, but the whole lexer, parser and codegen pipeline turned out to be far more approachable than I'd assumed;
-- how the language was designed from the start for Claude to write; and finally,
-- what building 33,000 lines of Rust with an agent in under three weeks actually looked like, including the parts where that got uncomfortable.
+- what the language looks like to write;
+- what's inside the compiler, which turned out to be far more approachable than I'd assumed;
+- how I designed it for Claude to write; and finally,
+- what three weeks of building it with an agent actually looked like.
 
-One last note: it's all up at [github.com/travisboettcher/hl-lang](https://github.com/travisboettcher/hl-lang) if you want to poke at it, or just see how questionable my Rust is. It's on version 0.34, which is a number that means *not done*, and so far it has only ever been tested against a homelab of exactly one person.
+One last note: it's all up at [github.com/travisboettcher/hl-lang](https://github.com/travisboettcher/hl-lang) if you want to poke at it, or just see how questionable my Rust is. It's on version 0.34, and so far it has only ever been tested against a homelab of exactly one person.
 
 ---
 

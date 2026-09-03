@@ -127,7 +127,7 @@ And here's what I get back for paperless, with the top-level networks block left
     - traefik.http.services.paperless.loadbalancer.server.port=8000
 ```
 
-Look at that first label. I get `traefik.docker.network=docker_default` for free, because the compiler can see the service sits on an external network and knows Traefik needs the hint to disambiguate - the name itself comes from the `network` block up top. It's also the label I once misspelled as `traefiki`, and now I never have to type it at all!
+Look at that first label. I get `traefik.docker.network=docker_default` for free, because the compiler can see the service sits on an external network and knows Traefik needs the hint to disambiguate - the name itself comes from the `network` block up top. It's also the label I once misspelled as `traefiki`, and these days I don't type it myself.
 
 Merging runs in three tiers:
 

@@ -69,7 +69,7 @@ The best part of that output is what isn't in the input. I never typed the word 
 
 I didn't build anything clever here, either. `hllc` reads a file and writes a Compose file, and that's about it. What comes out the other end is ordinary YAML that I can read, check into git, and run without `hllc` being anywhere nearby.
 
-For the divergence problem there's a `defaults` block, a template that gets applied to every service automatically and always loses to anything a service says for itself. `restart unless-stopped` lives in there once instead of getting retyped in every file, so when I change my mind about a fleet-wide convention, I change it in one place.
+For the divergence problem there's a `defaults` block, a template that gets applied to every service automatically and always loses to anything a service says for itself. `restart unless-stopped` lives in there once instead of getting retyped in every service, so when I change my mind about a convention, I change it in one place.
 
 ### Diagnostics
 

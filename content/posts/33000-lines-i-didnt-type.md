@@ -48,7 +48,7 @@ Now the part I'd rather not write. Working at that speed cost me two things, and
 
 **And the artifact has fingerprints.** I have one absolute rule on this blog, which is that I don't type em dashes (the ones you've seen in this series were all pasted out of `hllc`). So I went looking, and `hllc` contains 1,477 of them across 42 files. Twelve hundred of those sit in doc comments - the explanations the model wrote about its own code! Most of the diagnostics I quoted in the last four posts have one in them too. In the compiler source the comment-to-code ratio sits at 0.56, or five lines of explanation for every nine lines of Rust, and I have never documented anything that thoroughly in my life.
 
-None of that is wrong, exactly - the diagnostics are good, the comments are useful, and I read and approved every line. But it doesn't read like me, and if you know my writing at all you can see the seams. I mind that less about the code than I expected to. I mind it more about the prose than I want to admit, this blog being the one thing I thought was safely mine.
+None of that is wrong, exactly - the diagnostics are good, the comments are useful, and I read and approved every line. But it doesn't read like me, and if you know my writing at all you can see the seams. I mind that less about the code than I expected to. I mind it more about the prose than I want to admit (this blog being the one thing I thought was safely mine).
 
 ### What I'd keep
 

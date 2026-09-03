@@ -110,6 +110,18 @@ res.hll: 1:9: expected an identifier, found `template`
 
 `with`, `as`, `use` and `external` only mean anything in the grammar position where they're expected, which is the same trick C# plays with `var` and `async`. It cost me nothing to do it this way - and it means I never have to break one of my own files just because I wanted a new field name.
 
+So why not `template` as well? The difference is where it sits. Those four turn up inside a rule the parser has already committed to, so all it does there is check whether this word is the one it expected. `template` sits at the front of a top-level declaration - the point where the parser decides what it's parsing at all - and it's the only declaration that takes a parameter list, so it doesn't fit the ordinary `<type> <name> { ... }` shape:
+
+```
+$ cat t.hll
+network foo(a) {}
+
+$ hllc check t.hll
+t.hll: 1:12: expected `{`, found `(`
+```
+
+I could probably have given it a schema row and looked it up like everything else. I reserved it because the declaration head is the one position where the table would be picking the rule rather than checking it, and one reserved word felt cheaper than finding out later that it wasn't. The bill is a service I can't name `template` - which I have so far survived.
+
 ### The table
 
 So how does the parser know what `image` means, when the lexer handed it a bare identifier? It looks it up. There's no `parse_image()` in my parser and no `parse_expose()` either, just one generic block parser and a static table describing each type. A row looks like this:
@@ -131,13 +143,13 @@ pub static IMAGE: TypeSchema = TypeSchema {
 };
 ```
 
-`primary_field` is what makes `image "nginx"` work without a body - a bare value after the type name sets that one field. `map_separator` is why `volume` uses `->` and `env` uses `=`.
+`primary_field` is what makes `image "nginx"` work without a body - a bare value after the type name sets that one field. `map_separator` is the other one worth knowing about - it's why `volume` uses `->` and `env` uses `=`.
 
 I'd love to tell you that adding a field to the language is just adding a row here. It mostly isn't. A new field is a row in this table, plus an arm that lowers it into the tree, plus a slot in the merge code so templates know what to do with it, plus an arm in codegen, plus quite a lot of tests. What the table buys me is that none of those is a new *parsing* function - the block parser never changes. (Exactly one field in the whole language still gets bespoke parser code, and it's the `as` in `expose 8096 as "..."`. I have made my peace with it.)
 
 ### What writing the grammar down actually caught
 
-I wrote the formal grammar before I wrote the parser, which felt at the time like procrastinating (it wasn't). Three things fell out of it:
+I wrote the formal grammar before the parser, and not out of discipline. Claude was going to write the parser, and I wanted it working from a written spec rather than from whatever I'd managed to describe in a prompt that morning. Three things fell out of writing it down:
 
 - `as` never needed to be reserved, since it's only ever looked at in one grammar position and can be an ordinary identifier everywhere else;
 - two bits of syntax I'd been treating as separate features - a bare `external` flag, and invoking a template with no arguments - turn out to be the same grammar rule, told apart only by a schema lookup; and finally,

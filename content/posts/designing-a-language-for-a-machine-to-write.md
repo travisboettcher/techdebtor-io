@@ -5,7 +5,7 @@ draft: true
 tags: ["Home Lab", "Rust"]
 ---
 
-I write about four new services a year. Claude and I write rather more than that together, and by the time I started sketching `hll` I had spent a month watching it hand me [Docker Compose](https://docs.docker.com/compose/) blocks. So I stopped asking what I wanted to type, and started asking what a model would get right on the first try.
+This project started because I wanted to learn how to build a language. The homelab came second - I needed something worth compiling, and I had 33 [Docker Compose](https://docs.docker.com/compose/) files that were already a mess. What I didn't plan for was the third thing, which is that by the time I was sketching the grammar it was obvious Claude would be writing most of the `.hll` files rather than me. So I stopped asking what I wanted to type, and started asking what a model would get right on the first try.
 
 I want to be careful here, because this is the part of the project I was most pleased with - and also the part I got most wrong.
 
@@ -63,7 +63,7 @@ I wrote that for me, on the theory that future-me would be baffled. It works jus
 
 My notes are very confident that the diagnostics should be structured and machine-readable, JSON carrying a line and a field and an expected type. I never built any of it. `hllc` prints prose, and my own versioning rules say the exact wording isn't a stable contract, so nothing should be parsing it anyway. What I promise is the exit code, and the exit code is the only part the loop ever needed (a humbling result for the notes).
 
-Two more I still haven't written: an MCP server, so Claude could call the compiler directly instead of me relaying errors by hand, and the `explain` command I keep promising, which would tell me which tier set a given value.
+There's one more I still haven't written: the `explain` command I keep promising, which would tell me which tier set a given value.
 
 ### Values
 

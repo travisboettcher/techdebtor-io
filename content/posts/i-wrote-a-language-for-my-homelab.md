@@ -11,7 +11,7 @@ Here's what neither of those posts mentions. By the time you're standing up your
 
 ### The audit I should have done ages ago
 
-Before I wrote a single line of code, I sat down and read all 33 of my `docker-compose.yml` files start to finish - which took me an evening and a pot of coffee. I turned up two different problems, and the second one bothers me a lot more than the first.
+Before I wrote a single line of code, I read all 33 of my `docker-compose.yml` files start to finish. Or rather, Claude did - I have never once wanted to do that, and it turns out I still don't have to. I got two different problems back, and the second one bothers me a lot more than the first.
 
 **First, the things that are just broken.** Three of them, all live, all doing nothing - and two of them doing nothing silently:
 
@@ -92,14 +92,13 @@ Both of those exit non-zero, which is the part I actually care about - I can dro
 
 `hll` has a `raw` escape hatch for Compose keys the language doesn't model yet, plus a `labels` block for Docker labels it can't spell on its own. Both check structure - duplicate keys, collisions with a label the compiler already generated - but neither has any opinion about whether a key actually means anything. I know this because I fed it the exact `treafik...priority` typo from my audit, inside a `labels` block, and it compiled clean and passed the typo straight through. So the escape hatch is exactly as careful as I am, which based on the audit is not very :)
 
-`depends_on` doesn't fix my startup race either. A bare `depends_on [db]` still just means "wait for the container to start", same as it always has in Compose. Health-gating is something I have to write out - `depends_on [db { condition: service_healthy }]` - and the compiler will check that I spelled the condition right, but it won't guess that I wanted it. (I went back and forth on whether it should guess. Ask me again in six months.)
+`depends_on` is in there, but it won't fix my startup race for me. Both forms compile: a bare `depends_on [db]` comes out the other end meaning what it has always meant in Compose, which is "wait for the container to start", and health-gating is something I write out in full as `depends_on [db { condition: service_healthy }]`. The compiler checks that I spelled the condition right. It won't decide I wanted one. (I went back and forth on whether it should read the dependency's healthcheck and upgrade the bare form for me without being asked. Ask me again in six months.)
 
 Still on my plate:
 
 - an `explain` command, so I can ask where a given value in the generated output actually came from;
-- getting it running somewhere other than Linux x86-64;
-- shrinking the list of Compose keys that still need `raw`; and finally,
-- actually migrating the fleet, which is the entire point of the exercise.
+- getting it running somewhere other than Linux x86-64; and finally,
+- shrinking the list of Compose keys that still need `raw`.
 
 ### Where this series is going
 
@@ -110,7 +109,7 @@ The next few posts get into the parts I most enjoyed building:
 - how I designed it for Claude to write; and finally,
 - what three weeks of building it with an agent actually looked like.
 
-One last note: it's all up at [github.com/travisboettcher/hl-lang](https://github.com/travisboettcher/hl-lang) if you want to poke at it, or just see how questionable my Rust is. It's on version 0.34, and so far it has only ever been tested against a homelab of exactly one person.
+One last note: it's all up at [github.com/travisboettcher/hl-lang](https://github.com/travisboettcher/hl-lang) if you want to poke at it, or just see how questionable my Rust is. It hasn't reached 1.0 yet, and so far it has only ever been tested against a homelab of exactly one person.
 
 ---
 

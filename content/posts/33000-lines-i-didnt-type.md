@@ -5,13 +5,13 @@ draft: true
 tags: ["Home Lab", "Rust"]
 ---
 
-That's five posts and about three weeks, so here's where it all landed. I started `hll` in the middle of August. By the end of the month I had a working compiler, 58 tagged releases, and a repository I had mostly reviewed instead of written - which is a strange thing to say about your own side project! Let me explain why I think it worked, and then show you the bill.
+That's five posts and about three weeks, so here's where it all landed. I started `hll` in the middle of August. By the end of the month I had a working compiler, 58 tagged releases, and a repository I had directed rather than written - which is a strange thing to say about your own side project! Let me explain why I think it worked, and then show you the bill.
 
 ### The numbers
 
 The workspace is five crates and about 33,000 lines of Rust - 18,000 of compiler to 15,000 of tests. It took roughly two hundred and fifty issues and pull requests to get there, which works out at eight merges a day.
 
-I didn't type most of it. I read nearly all of it, which is a different job and, as it happens, the one that mattered.
+I didn't type most of it, and I should be straight about the other half of that: I didn't read most of it either. What I reviewed was the shape - what a feature was supposed to do, and what was supposed to prove it did. The how I left as an implementation detail (a sentence I'd have found insufferable two years ago) and let the test suite argue about it.
 
 ### Why I think it held together
 
@@ -30,7 +30,7 @@ So I put my effort into checking the thing instead of writing it, and every pull
 
 That last one is the one I'd keep if I could only keep one, and I'm still a bit pleased with it! My snapshots prove the compiler agrees with expectations I wrote myself, which is a lovely closed loop that proves almost nothing. Asking Compose is the only check here whose answer I don't get to control - and it has already caught one thing every other test in the repo waved straight through!
 
-I made it fail rather than skip when Docker isn't installed - and the comment I left explaining that runs on for a while. Here's the part that matters:
+I made it fail rather than skip when Docker isn't installed - one of the few calls in here I can point at and claim. The comment explaining it is not mine - Claude wrote it, and it runs on for a while. Here's the part that matters:
 
 ```
 //! skipped and return" reads in a CI log as a green test that ran —
@@ -38,7 +38,7 @@ I made it fail rather than skip when Docker isn't installed - and the comment I 
 //! worse than having no test at all.
 ```
 
-Past-me was in a mood. Past-me was also right.
+That's the argument I would have made, made rather better than I'd have made it, in a comment I didn't write.
 
 ### The bill
 
@@ -46,16 +46,16 @@ Now the part I'd rather not write. Working at that speed cost me two things, and
 
 **My design notes went stale, and I didn't catch it for weeks.** The document I designed the language from stopped describing the language I shipped. It says `depends_on` defaults to health-gating; it doesn't. Its grammar has no separator token at all; the parser wants a newline between fields. It leans toward always emitting `container_name`; the implementation goes out of its way not to. It lists path-based routing and TCP routers as deferred - both shipped weeks ago. I decided all of those properly, in pull requests, with reasons written into the commit messages. The notes have since heard about half of them, because I sat down and wrote a corrections section while fact-checking these posts. Nothing in how I work did that on its own, though, and the other half is still only recorded here. At eight merges a day my design doc was the slowest-moving thing in the project.
 
-**And the artifact has fingerprints.** I have one absolute rule on this blog, which is that I don't type em dashes (the ones you've seen in this series were all pasted out of `hllc`). So I went looking, and `hllc` contains 1,477 of them across 42 files. Twelve hundred of those sit in doc comments - the explanations the model wrote about its own code! Most of the diagnostics I quoted in the last four posts have one in them too. In the compiler source the comment-to-code ratio sits at 0.56, or five lines of explanation for every nine lines of Rust, and I have never documented anything that thoroughly in my life.
+**And the artifact has fingerprints.** I don't type em dashes. That isn't a rule I've ever announced, it's just not a key my hands know how to find (every one you've seen in this series was pasted out of `hllc`). So I went looking, and `hllc` contains 1,477 of them across 42 files, 1,377 of those on comment lines, which is to say in the explanations the model wrote about its own code! Most of the diagnostics I quoted in the last four posts have one in them too. In the compiler source the comment-to-code ratio sits at 0.56, or five lines of explanation for every nine lines of Rust, and I have never documented anything that thoroughly in my life.
 
-None of that is wrong, exactly - the diagnostics are good, the comments are useful, and I read and approved every line. But it doesn't read like me, and if you know my writing at all you can see the seams. I mind that less about the code than I expected to. I mind it more about the prose than I want to admit (this blog being the one thing I thought was safely mine).
+None of that is wrong, exactly. The diagnostics are good, the comments are useful, and the tests say the code underneath them does what it claims. It just isn't in my handwriting, and if you know my writing at all you can see where the seams are.
 
 ### What I'd keep
 
 If I started something else this way, three things I'd do again:
 
 - build the thing whose correctness a machine can check, then spend the whole budget on the checking;
-- read the diffs - all of them - since reviewing is the job now and it doesn't compress the way typing does; and finally,
+- spend the review budget on the shape of a feature and the tests that pin it down, rather than on the lines, which is the part I'd have skimmed anyway; and finally,
 - keep at least one test whose answer I don't get to control.
 
 And then re-read my own design doc, which I clearly should have been doing all along.
@@ -64,7 +64,7 @@ And then re-read my own design doc, which I clearly should have been doing all a
 
 Five posts: why I built [the thing in the first place](/posts/i-wrote-a-language-for-my-homelab/), [what you write in it](/posts/writing-services-in-hll/), [what's inside it](/posts/taking-my-compiler-apart/), [how I designed it for a model to write](/posts/designing-a-language-for-a-machine-to-write/), and this.
 
-It's still version 0.34, it still runs on one architecture only, and I still haven't migrated the 33 files that started all of this. Two months in and the actual point of the exercise is the one thing I haven't done, which feels about right :)
+It still runs on one architecture only, and there's a 1.0 I keep walking toward. The 33 files that started all of this are migrated, though. Migrating them is also where most of the features came from - every file I moved over turned up something the language couldn't say yet. Which is a better way to build a language than designing it all up front, and not even slightly the way I'd have told you I was going to do it :)
 
 ---
 

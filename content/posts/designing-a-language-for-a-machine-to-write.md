@@ -5,15 +5,19 @@ draft: true
 tags: ["Home Lab", "Rust"]
 ---
 
-When I started sketching `hll` I already knew I wasn't going to be the one writing most of the `.hll` files. I write about four services a year - Claude and I write rather more than that together, and I had just spent a month watching it hand me Compose blocks, so the design question I actually had was not "what do I want to type" but "what will a model get right on the first try."
+I write about four new services a year. Claude and I write rather more than that together, and by the time I started sketching `hll` I had spent a month watching it hand me [Docker Compose](https://docs.docker.com/compose/) blocks. So I stopped asking what I wanted to type, and started asking what a model would get right on the first try.
 
-That turns out to change a few things, and not the ones I expected.
+I want to be careful here, because this is the part of the project I was most pleased with - and also the part I got most wrong.
 
-### What it changed in the grammar
+### Grammar
 
-So what does designing for a model actually change? The obvious moves came first, and they're the least interesting. Keep the shapes close to Compose and YAML, since that's what's already dense in anything a model has read. Prefer named fields over positional ones, so nothing depends on argument order (there is no `expose(80, "host", true)` anywhere in this language, and there never will be). Put the shared conventions in a `defaults` template that anybody can open and read, rather than leaving them as things I happen to know (one per entry file, as post 2 covers - it's the one template imports can't share).
+The obvious moves came first, and I think they're the least interesting:
 
-Then there was the rule I wrote down and did not keep - **one canonical way to say each thing.** Multiple valid spellings of the same config produce inconsistent generations, and inconsistent generations are how I end up back at my drifting Compose files from post 1. Good rule. Here's `hll` failing it:
+- keep the shapes close to Compose and YAML, since that's what's already dense in anything a model has read;
+- name every field, so nothing depends on argument order (there is no `expose(80, "host", true)` in this language, and I'm glad of it); and finally,
+- put my shared conventions in a `defaults` template anyone can open and read, instead of leaving them as things I happen to know.
+
+Then there's the rule I wrote down and did not keep: **one canonical way to say each thing.** I believed that one. Multiple spellings of the same config give you inconsistent generations, and inconsistent generations are how I ended up with the drifting Compose files I complained about in [post 1](/posts/i-wrote-a-language-for-my-homelab/). Here I am breaking it. First the sugar:
 
 ```
 service s {
@@ -21,6 +25,8 @@ service s {
   expose 80 as "h.example.com"
 }
 ```
+
+And here's the longhand, which I also kept:
 
 ```
 service s {
@@ -32,22 +38,17 @@ service s {
 }
 ```
 
-Those two produce byte-identical output. I kept the `as` sugar because it's much nicer to write in the common case - which is an argument about my own convenience, made while writing a language for something else to use. (I still think it was the right call. It's also not the only place I broke that rule - the shorthand that lets me write `image "nginx"` instead of `image { ref: "nginx" }` breaks it everywhere else.)
+Those two produce byte-identical output - I checked, and I was slightly hoping they wouldn't! I kept the sugar because I like writing it, which is an argument about my own convenience that I made while designing a language for something else to use. (I still think it was right. It's also not the only place I broke the rule - the shorthand that lets me write `image "nginx"` instead of `image { ref: "nginx" }` breaks it everywhere.)
 
 ### The loop matters more than the grammar
 
-Here's the part I got right for the wrong reasons. Grammar choices are one-shot - the model either guesses your syntax or it doesn't - while the compiler running in a loop corrects a wrong guess in seconds, before it ever reaches my homelab. My notes did rank tooling above grammar at the time, under a heading that says so in as many words. What they got wrong was which tooling.
+So which of those actually mattered? Not the grammar, as it turns out. My grammar choices are one-shot - a model either guesses the syntax or it doesn't, and I only get to influence that once, months earlier, while writing a spec. The compiler is different, because the compiler gets to answer back.
 
-`hllc check` runs the whole pipeline, writes nothing, and exits non-zero when anything is wrong. That's the whole mechanism. Something writes an `.hll` file, `check` says what's wrong, it tries again.
+`hllc check` compiles a file, writes nothing to disk, and fails loudly if anything is wrong - that's the entire mechanism, and it turned out to be enough. Claude writes a file, `check` complains, Claude fixes it, and I never see the three bad versions in between!
 
-Which makes the wording of a diagnostic load-bearing in a way it isn't when only a person reads it. Misspell a field and `hllc` doesn't just refuse, it points at a way out:
+I'll give my design notes credit, too. They ranked the tooling ideas above the grammar ideas at the time, under a heading that says so in as many words. What I got wrong was which tooling.
 
-```
-a.hll: 2:3: unknown field "imag" on `service` — if `imag` is a Compose key
-with no `hll` field yet, pass it through with `raw { imag: ... }`
-```
-
-Better still, put a comma somewhere Traefik would misread it and you get told exactly what to write instead:
+Because if the compiler is going to answer back, what it *says* starts to matter enormously. My favorite one in the whole compiler catches a comma that would change a Traefik label's meaning without telling anyone - and rather than just refusing, it tells me exactly what to write instead:
 
 ```
 b.hll:6:18: `router.entrypoints` must not contain ',' — it would change the
@@ -56,20 +57,17 @@ the entry points as separate items (`entrypoints web, websecure`) and let
 `hllc` join them
 ```
 
-I wrote both of those hints for me, on the theory that future-me would be confused. They work just as well for a model, and for the same reason - the fix is in the message, so nobody has to go read the spec to make progress. That's the whole trick, and it turns out not to be an AI trick at all!
+I wrote that for me, on the theory that future-me would be baffled. It works just as well on a model, and I never had to change a word of it! The repair is in the message, so nobody has to go and read the spec to make progress. That's the whole trick, and I don't think it's really an AI trick.
 
 ### What I planned and didn't build
 
-My design notes are very confident that the errors should be structured and machine-readable - JSON with a line, a field, an expected type. None of that exists. `hllc` emits prose, and the project's own versioning rules say the exact wording is explicitly *not* a stable contract, so nothing should be parsing it anyway. What is stable is the exit code - which turns out to be the only part the loop actually needs (a humbling result for the design notes).
+My notes are very confident that the diagnostics should be structured and machine-readable, JSON carrying a line and a field and an expected type. I never built any of it. `hllc` prints prose, and my own versioning rules say the exact wording isn't a stable contract, so nothing should be parsing it anyway. What I promise is the exit code, and the exit code is the only part the loop ever needed (a humbling result for the notes).
 
-Two more from the same notes, both still just notes:
+Two more I still haven't written: an MCP server, so Claude could call the compiler directly instead of me relaying errors by hand, and the `explain` command I keep promising, which would tell me which tier set a given value.
 
-- an MCP server wrapping `validate_config` and `generate_compose`, so Claude could call the compiler directly instead of me relaying errors by hand; and finally,
-- the `explain` command from post 1, which would answer "which tier set this value" for any field in the output.
+### Values
 
-### Where it still can't help
-
-Field names are always checked. Values get checked where the legal set is short and closed, so I get told off for a bad router protocol, a bad `depends_on` condition, or anything that turns into a Traefik label. Everything else I am on my own for. `restart` is the gap that bothers me most:
+Field names are always checked. Values get checked where the legal set is short and closed, so I get told off for a bad router protocol or a bad `depends_on` condition. Everywhere else I'm on my own, and `restart` is the gap that bothers me most:
 
 ```
 service s {
@@ -78,9 +76,9 @@ service s {
 }
 ```
 
-`always-on` is not a Docker restart policy. It compiles clean, and `docker compose config` won't flag it either - you find out when the daemon refuses to start the container.
+`always-on` isn't a Docker restart policy - but it compiles clean, and `docker compose config` won't flag it either, so I find out about it when the daemon refuses the container.
 
-There's a worse version of this, and I found it by reading my own error message properly. That unknown-field hint is generic on purpose: it suggests `raw` for every field it doesn't recognize, because it can't tell a Compose key I haven't modelled yet from a plain typo. So take its advice literally on `imag`, and this is what you get:
+Then there's a worse one, which I found by reading my own error message properly. The unknown-field hint is generic on purpose - it offers `raw` for anything it doesn't recognize, because it can't tell a Compose key I haven't modeled yet from a plain typo. So I took its advice on a typo:
 
 ```
 service s {
@@ -91,17 +89,17 @@ service s {
 }
 ```
 
-`hllc` accepts that. Compose does not:
+`hllc` accepts that happily! Compose does not:
 
 ```
 validating out.yaml: services.s additional properties 'imag' not allowed
 ```
 
-My own compiler talked me out of a caught error and into an uncaught one! That's the honest shape of `hll` right now - solid on "that field doesn't exist", weak on "that value is wrong", and weakest exactly where the escape hatch meets a model that will cheerfully invent a plausible-looking value.
+My own compiler talked me out of a caught error and into an uncaught one. I'm oddly delighted by that, and I'd never have found it if I hadn't gone looking for something to admit.
 
 ### One more to go
 
-Next post is the other half of this, and the one with the numbers in it - what building 33,000 lines of Rust with an agent in under three weeks actually looked like, including the parts I'd rather not have written down. There's also an `init` command I keep sketching, which would generate the Traefik configuration itself rather than just the services behind it, but that one can wait until it exists.
+The last post is the other half of this one - and the one where I have to account for myself, since that's three weeks, an agent, and 33,000 lines of Rust I did not type. The [design doc](https://github.com/travisboettcher/hl-lang/blob/main/docs/DESIGN.md) has the grammar in the meantime.
 
 ---
 

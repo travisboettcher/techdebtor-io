@@ -99,7 +99,7 @@ My own compiler talked me out of a caught error and into an uncaught one. I'm od
 
 ### One more to go
 
-The last post is the other half of this one - and the one where I have to account for myself, since that's three weeks, an agent, and 33,000 lines of Rust I did not type. The [design doc](https://github.com/travisboettcher/hl-lang/blob/main/docs/DESIGN.md) has the grammar in the meantime.
+The last post is the other half of this one - and the one where I have to account for myself, since that's three weeks, an agent, and 33,000 lines of Rust I did not type. If you want the grammar before then, it's all in [docs/DESIGN.md](https://github.com/travisboettcher/hl-lang/blob/main/docs/DESIGN.md).
 
 ---
 

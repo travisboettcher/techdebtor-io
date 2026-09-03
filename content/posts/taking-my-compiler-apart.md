@@ -157,7 +157,7 @@ Fields in a struct body are newline-separated. That rule lives beside the gramma
 
 ### Coming up
 
-The next one is the post I've been looking forward to. `hll` was designed on the assumption that Claude would write most of the `.hll` files, and several things in here exist purely because of that. Until then, the [design doc](https://github.com/travisboettcher/hl-lang/blob/main/docs/DESIGN.md) has the real grammar, and the code is at [github.com/travisboettcher/hl-lang](https://github.com/travisboettcher/hl-lang).
+The next one is the post I've been looking forward to. `hll` was designed on the assumption that Claude would write most of the `.hll` files, and several things in here exist purely because of that. Until then, the formal grammar is written out in [docs/DESIGN.md](https://github.com/travisboettcher/hl-lang/blob/main/docs/DESIGN.md), and the code is at [github.com/travisboettcher/hl-lang](https://github.com/travisboettcher/hl-lang).
 
 ---
 

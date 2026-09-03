@@ -23,7 +23,7 @@ These had been sitting in my config for who knows how long, and nothing ever tol
 
 **Second, the same job done five different ways.** This is the one that actually bothers me.
 
-Copy-paste doesn't just spread mistakes, it spreads whichever version you happened to copy from that day. So my fleet has layers, and you can very nearly date a file by which conventions it uses. About half of them still carry the deprecated top-level `version: '3.x'` key; about half set `container_name`, with no rule I can reconstruct for which ones; roughly a third set custom `dns` overrides (I know why a couple of them do, and the rest are a mystery to me). One still has a `links:` directive, which Compose made redundant years ago ([`vikunja`](https://vikunja.io/), I'm looking at you!). Two publish ports directly for no reason I can find, which looks an awful lot like debugging I forgot to undo.
+Copy-paste doesn't just spread mistakes, it spreads whichever version you happened to copy from that day - so my fleet has layers, and you can very nearly date a file by which conventions it uses. About half of them still carry the deprecated top-level `version: '3.x'` key; about half set `container_name`, with no rule I can reconstruct for which ones; roughly a third set custom `dns` overrides (I know why a couple of them do, and the rest are a mystery to me). One still has a `links:` directive, which Compose made redundant years ago ([`vikunja`](https://vikunja.io/), I'm looking at you!). Two publish ports directly for no reason I can find, which looks an awful lot like debugging I forgot to undo.
 
 And then the one that isn't cosmetic. Some of my services declare `depends_on` and wait only for the dependency's container to start, while others properly wait for its healthcheck to pass. [Gitea](https://about.gitea.com/), [Wallabag](https://www.wallabag.it/en) and AdventureLog are in the first group; [n8n](https://n8n.io/), Sharry, Wanderer, [Authentik](https://goauthentik.io/) and [Miniflux](https://miniflux.app/) are in the second. Same intent, two different behaviors, and a startup race sitting in the first group that I have so far only been lucky enough to avoid.
 
@@ -69,7 +69,7 @@ The best part of that output is what isn't in the input. I never typed the word 
 
 I didn't build anything clever here, either. `hllc` reads a file and writes a Compose file, and that's about it. What comes out the other end is ordinary YAML that I can read, check into git, and run without `hllc` being anywhere nearby.
 
-For the divergence problem there's a `defaults` block, a template that gets applied to every service automatically and quietly loses to anything a service says for itself. `restart unless-stopped` lives in there once instead of getting retyped in every file, so when I change my mind about a fleet-wide convention, I change it in one place.
+For the divergence problem there's a `defaults` block, a template that gets applied to every service automatically and always loses to anything a service says for itself. `restart unless-stopped` lives in there once instead of getting retyped in every file, so when I change my mind about a fleet-wide convention, I change it in one place.
 
 ### Diagnostics
 
@@ -107,7 +107,7 @@ The next few posts get into the parts I found most interesting to build:
 
 - what the language actually looks like to write;
 - what's inside the compiler - I'll leave what a lexer is to better writers than me, but the whole lexer, parser and codegen pipeline turned out to be far more approachable than I'd assumed;
-- how the language was deliberately designed for Claude to write; and finally,
+- how the language was designed from the start for Claude to write; and finally,
 - what building 33,000 lines of Rust with an agent in under three weeks actually looked like, including the parts where that got uncomfortable.
 
 One last note: it's all up at [github.com/travisboettcher/hl-lang](https://github.com/travisboettcher/hl-lang) if you want to poke at it, or just see how questionable my Rust is. It's on version 0.34, which is a number that means *not done*, and so far it has only ever been tested against a homelab of exactly one person.

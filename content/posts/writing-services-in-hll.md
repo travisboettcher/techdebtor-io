@@ -72,11 +72,11 @@ Here are the labels that come out of that - I've left off the rest of the servic
     - traefik.http.services.vikunja.loadbalancer.server.port=3456
 ```
 
-Notice that the router names got folded into the label keys. That `@file` suffix on the middleware is a [Traefik](https://traefik.io/traefik/) convention that `hllc` applies for me, and I have left it off by hand more than once.
+Notice that the router names got folded into the label keys. That `@file` suffix on the middleware is a [Traefik](https://traefik.io/traefik/) convention that `hllc` applies for me (I have left it off by hand more than once, and I expect I would have again).
 
 ### The part that actually fixes last post's problem
 
-Templates are the reason I built this thing. A `template` is a named bag of fields you merge into a service, and one name is special - `defaults` gets used everywhere without anybody asking for it.
+Templates are the reason I built this thing. A `template` is a named bag of fields you merge into a service, and one name is special - `defaults` gets used everywhere without anybody asking for it (which is either convenient or alarming, depending on the day).
 
 ```
 network traefik-net {
@@ -127,7 +127,7 @@ And here's what I get back for paperless, with the top-level networks block left
     - traefik.http.services.paperless.loadbalancer.server.port=8000
 ```
 
-Look at that first label. I get `traefik.docker.network=docker_default` for free, because the compiler can see the service sits on an external network and knows Traefik needs the hint to disambiguate - the name itself comes from the `network` block up top. It's also the label I once misspelled as `traefiki`, and now I never have to type it.
+Look at that first label. I get `traefik.docker.network=docker_default` for free, because the compiler can see the service sits on an external network and knows Traefik needs the hint to disambiguate - the name itself comes from the `network` block up top. It's also the label I once misspelled as `traefiki`, and now I never have to type it at all!
 
 Merging runs in three tiers:
 
@@ -147,7 +147,7 @@ So how do I decide whether something belongs in the compiler? The test I keep co
 
 That's why there's no `auth` keyword. The `authenticated` template up there lives in my own files, and nothing inside `hllc` has heard of [Authentik](https://goauthentik.io/), or my domain, or the PUID that every [LinuxServer.io](https://www.linuxserver.io/) image asks for. The compiler knows Compose and Traefik, and my own conventions live in files I can edit without recompiling anything.
 
-You can put those templates and networks in a file of their own and pull them in by name. There's one catch - `defaults` only ever gets looked up in the entry file, so it's the one template you can't move:
+You can put those templates and networks in a file of their own and pull them in by name. There's one catch - `defaults` only ever gets looked up in the entry file, so it's the one template you can't move out of the way:
 
 ```
 use "common.hll" as common
@@ -175,7 +175,7 @@ service jellyfin {
 }
 ```
 
-Both of them land in the output untouched, and I get hardware transcoding without the grammar ever needing to learn what a video group is.
+Both of them land in the output untouched, and I get hardware transcoding without the grammar ever needing to learn what a video group is!
 
 There's one sharp edge here and I found it the hard way, which is where this blog gets most of its material. `raw { labels: ... }` *replaces* the computed Traefik labels instead of adding to them, so a service with routers loses all of them. It warns about that now:
 
@@ -187,7 +187,7 @@ block to add labels to the computed set instead, or reproduce the ones you still
 need in this list
 ```
 
-Writing that warning took me less time than working the behavior out a second time would have.
+Writing that warning took me less time than working the behavior out a second time would have (the second time is always somehow worse than the first).
 
 ### Next
 

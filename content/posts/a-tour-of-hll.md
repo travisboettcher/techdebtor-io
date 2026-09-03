@@ -9,7 +9,7 @@ tags: ["Home Lab", "Rust"]
 
 ### The shape of a service
 
-Everything in `hll` is a declaration: a type, a name, and a body. Here's [BookStack](https://www.bookstackapp.com/), which is where all my long-form homelab documentation lives:
+Almost everything in `hll` is a declaration: a type, a name, and a body. Here's [BookStack](https://www.bookstackapp.com/), which is where all my long-form homelab documentation lives:
 
 ```
 service bookstack {
@@ -40,7 +40,7 @@ Nothing in there is a keyword, incidentally: `service`, `image`, `expose` and th
 
 ### expose, and when it isn't enough
 
-`expose 80 as "wiki.techdebtor.io"` is shorthand for the common case, and it says roughly "this service listens on 80, and one hostname routes to it." That covers most of my fleet, but a service that needs more than one route gets `router` blocks instead. [Vikunja](https://vikunja.io/), where my to-dos go to be ignored, wants two of them:
+`expose 80 as "wiki.techdebtor.io"` is shorthand for the common case, and it says roughly "this service listens on 80, and one hostname routes to it." That covers most of my fleet, but a service that needs more than one route gets `router` blocks, which can either replace the sugar or sit alongside it. [Vikunja](https://vikunja.io/), where my to-dos go to be ignored, wants two of them:
 
 ```
 service vikunja {
@@ -66,13 +66,18 @@ service vikunja {
     - traefik.http.services.vikunja.loadbalancer.server.port=3456
 ```
 
-The router names get folded into the label keys, and that `@file` suffix on the middleware is a Traefik convention `hllc` knows to apply (I have left it off by hand more than once, and Traefik's response is to simply not route anything).
+The router names get folded into the label keys, and that `@file` suffix on the middleware is a Traefik convention `hllc` knows to apply (I have left it off by hand more than once, with predictably unroutable results).
 
 ### The part that actually fixes last post's problem
 
 Templates are the reason I built this thing. A `template` is a named bag of fields that a service can merge in, and one name is special: `defaults` gets applied to every service automatically, whether or not anybody asks for it.
 
 ```
+network traefik-net {
+  external
+  name: "docker_default"
+}
+
 template defaults {
   networks [traefik-net]
   restart unless-stopped
@@ -105,7 +110,6 @@ service paperless {
     - PGID=1000
     networks:
     - traefik-net
-    - default
     expose:
     - 8000
     labels:
@@ -115,7 +119,7 @@ service paperless {
     - traefik.http.services.paperless.loadbalancer.server.port=8000
 ```
 
-That first label is my favourite thing in this whole project. `traefik.docker.network=docker_default` is generated, because the compiler knows the service sits on an external network and knows that Traefik needs the hint to disambiguate. It is also the exact label I once typed as `traefiki`, and it is now not a thing I can type at all!
+That first label is my favourite thing in this whole project. `traefik.docker.network=docker_default` is generated, because the compiler can see the service sits on an external network and knows Traefik needs the hint to disambiguate. The name itself comes from the `network` block at the top. It is also the exact label I once typed as `traefiki`, and it is now not a thing I have to type at all!
 
 Merging runs in three tiers. `defaults` sits at the bottom, where it always loses; then come the templates listed in `with`, left to right; and finally the service's own body, which beats everything. Two templates disagreeing is the interesting case. Rather than picking a winner, the compiler just refuses:
 
@@ -127,7 +131,7 @@ p2f.hll:2:22: field `restart.policy` set by both template `a` (at p2f.hll:1:22) 
 
 So how do I decide whether something belongs in the compiler? The test I keep coming back to is whether it would make sense on a homelab with completely different infrastructure, and most of the time the answer is no.
 
-That's why there's no `auth` keyword. The `authenticated` template up there lives in my own files, and nothing inside `hllc` has ever heard of [Authentik](https://goauthentik.io/), or of my domain, or of the PUID that every [LinuxServer.io](https://www.linuxserver.io/) image asks for. The compiler knows Compose and Traefik, and my own conventions live in files I can edit without recompiling anything. Templates and networks can also sit in a file of their own and get pulled in by name:
+That's why there's no `auth` keyword. The `authenticated` template up there lives in my own files, and nothing inside `hllc` has ever heard of [Authentik](https://goauthentik.io/), or of my domain, or of the PUID that every [LinuxServer.io](https://www.linuxserver.io/) image asks for. The compiler knows Compose and Traefik, and my own conventions live in files I can edit without recompiling anything. Templates and networks can also sit in a file of their own and get pulled in by name, with one catch: `defaults` is looked up in the entry file only, so it's the one template that can't move:
 
 ```
 use "common.hll" as common
@@ -142,28 +146,29 @@ service bookstack {
 
 ### The escape hatch
 
-The language doesn't model every Compose key and it never will, so `raw` passes whatever you give it straight through to the output. Here's [Jellyfin](https://jellyfin.org/) getting access to the iGPU:
+The language doesn't model every Compose key and it never will, so `raw` passes whatever you give it straight through to the output. Here's [Jellyfin](https://jellyfin.org/) getting at the iGPU, using the built-in `devices` field for the half the grammar knows about and `raw` for the half it doesn't:
 
 ```
 service jellyfin {
   image "jellyfin/jellyfin:latest"
   expose 8096 as "media.techdebtor.io"
+  devices "/dev/dri" -> "/dev/dri"
   raw {
-    devices: ["/dev/dri:/dev/dri"]
     group_add: ["video"]
   }
 }
 ```
 
-Both of those land in the generated file untouched. Hardware transcoding works, and the grammar never had to learn what a GPU is!
+`group_add` lands in the generated file untouched, and hardware transcoding works without the grammar ever needing to learn what a video group is!
 
 There is one genuinely sharp edge here, and I found it the way I find most things (the hard way, which is where this blog gets most of its material). `raw { labels: ... }` *replaces* the computed Traefik labels rather than adding to them, so a service with routers quietly loses every one of them. It warns about that now:
 
 ```
-warning: `raw { labels: ... }` replaces service `jellyfin`'s generated Traefik
-labels rather than adding to them, so every label `router`, `expose`, and
-`traefik` would have produced is dropped — use a `labels { ... }` block to add
-labels to the computed set instead
+rawlabels.hll:5:5: warning: `raw { labels: ... }` replaces service `jellyfin`'s
+generated Traefik labels rather than adding to them, so every label `router`,
+`expose`, and `traefik` would have produced is dropped — use a `labels { ... }`
+block to add labels to the computed set instead, or reproduce the ones you still
+need in this list
 ```
 
 Writing that warning was substantially cheaper than explaining the behaviour to myself a second time.

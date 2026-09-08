@@ -9,12 +9,12 @@ Last post I covered why I wrote a compiler for my homelab, which was mostly 33 C
 
 ### The shape of a service
 
-Every service you write is a declaration - a type, a name, and a body. Here's [BookStack](https://www.bookstackapp.com/), where all my long-form homelab documentation lives:
+Every service is a declaration - a type, a name, and a body. Here's [BookStack](https://www.bookstackapp.com/), where all my long-form homelab documentation lives:
 
 ```
 service bookstack {
   image "lscr.io/linuxserver/bookstack:latest"
-  expose 80 as "wiki.techdebtor.io"
+  expose 80
   env PUID = "1000"
   env PGID = "1000"
   restart unless-stopped
@@ -35,130 +35,72 @@ services:
     - PGID=1000
     expose:
     - 80
-    labels:
-    - traefik.http.routers.bookstack.rule=Host(`wiki.techdebtor.io`)
-    - traefik.http.services.bookstack.loadbalancer.server.port=80
 ```
 
-Almost nothing in that input is a keyword. `service`, `image`, `expose` and the rest are ordinary identifiers that get looked up in a table while the file is parsed - there's exactly one reserved word in the whole language, and I'll get to it next post.
+Not one word in that input is a keyword. `service`, `image`, `expose` and the rest are ordinary identifiers that get looked up in a table while my file is being parsed (which means I can name a network `expose` if I want to, and next post I do).
 
-### expose, and when it isn't enough
+### Templates, and the problem they fix
 
-`expose 80 as "wiki.techdebtor.io"` is shorthand for the common case. It says roughly "this service listens on 80, and one hostname routes to it," which covers most of my fleet. When you need more than that you write `router` blocks, either instead of the sugar or alongside it. [Vikunja](https://vikunja.io/), where my to-dos go to be ignored, wants two of them:
+Templates are the reason I built this thing, and they're where last post's complaint gets answered. Half my Compose files set `container_name` under a rule I can no longer reconstruct; a third carry `dns` overrides I have forgotten the reasons for. Those aren't 33 decisions - they're one decision, re-typed from memory 33 times, drifting a little each time.
 
-```
-service vikunja {
-  image "vikunja/vikunja:latest"
-  expose 3456
-  router public {
-    host: "todo.techdebtor.io"
-    entrypoints: web-secure
-  }
-  router internal {
-    host: "todo.internal.techdebtor.io"
-    middleware: local-ipwhitelist
-  }
-}
-```
-
-Here are the labels that come out of that - I've left off the rest of the service for brevity.
-
-```yaml
-    labels:
-    - traefik.http.routers.vikunja-public.rule=Host(`todo.techdebtor.io`)
-    - traefik.http.routers.vikunja-public.entrypoints=web-secure
-    - traefik.http.routers.vikunja-internal.rule=Host(`todo.internal.techdebtor.io`)
-    - traefik.http.routers.vikunja-internal.middlewares=local-ipwhitelist@file
-    - traefik.http.services.vikunja.loadbalancer.server.port=3456
-```
-
-Notice that the router names got folded into the label keys. That `@file` suffix on the middleware is a [Traefik](https://traefik.io/traefik/) convention that `hllc` applies for me (I have left it off by hand more than once, and I expect I would have again).
-
-### The part that actually fixes last post's problem
-
-Templates are the reason I built this thing. A `template` is a named bag of fields you merge into a service, and one name is special - `defaults` gets used everywhere without anybody asking for it (which is either convenient or alarming, depending on the day).
+So you write it once. Here's [Paperless](https://docs.paperless-ngx.com/), and I'd watch the first line:
 
 ```
-network traefik-net {
-  external
-  name: "docker_default"
-}
-
-template defaults {
-  networks [traefik-net]
-  restart unless-stopped
-}
+use "std:traefik" as traefik
 
 template linuxserver_app(puid, pgid) {
   env PUID = $puid
   env PGID = $pgid
-}
-
-template authenticated {
-  router {
-    middleware: forwardAuth-authentik
-  }
+  restart unless-stopped
+  networks [proxy]
 }
 
 service paperless {
-  with linuxserver_app { puid: 1000, pgid: 1000 }, authenticated
+  with linuxserver_app { puid: 1000, pgid: 1000 },
+       traefik.http { host: "paper.techdebtor.io", port: 8000 },
+       traefik.docker_network { net: proxy }
   image "paperlessngx/paperless-ngx:latest"
-  expose 8000 as "paper.techdebtor.io"
 }
 ```
 
-And here's what I get back for paperless, with the top-level networks block left off.
+Parameters are declared bare (no types to write - the field a value lands in does the checking) and referenced with a `$`. Changing my mind about a convention is now one edit instead of 33 reviews.
+
+### The part I didn't see coming
 
 ```yaml
-  paperless:
-    image: paperlessngx/paperless-ngx:latest
-    restart: unless-stopped
-    environment:
-    - PUID=1000
-    - PGID=1000
-    networks:
-    - traefik-net
-    expose:
-    - 8000
     labels:
-    - traefik.docker.network=docker_default
     - traefik.http.routers.paperless.rule=Host(`paper.techdebtor.io`)
-    - traefik.http.routers.paperless.middlewares=forwardAuth-authentik@file
     - traefik.http.services.paperless.loadbalancer.server.port=8000
+    - traefik.docker.network=docker_default
 ```
 
-Look at that first label. I get `traefik.docker.network=docker_default` for free, because the compiler can see the service sits on an external network and knows Traefik needs the hint to disambiguate - the name itself comes from the `network` block up top. It's also the label I once misspelled as `traefiki`, and these days I don't type it myself.
+`traefik.http` is a template. Not a keyword, not a field, not a thing the compiler knows about - a template, invoked through the same `with` as the one I wrote myself two paragraphs ago. `std:traefik` ships inside the `hllc` binary, so there's no file to vendor and no path to get right - but that's a delivery convenience and nothing more. My compiler has never heard of Traefik.
 
-Merging runs in three tiers:
+That gets a whole post later on (it wasn't always true, and getting there cost me most of a month). What matters here is the test it came out of: would this make sense on a homelab with completely different infrastructure? A `router` field only means something if you happen to run Traefik, so it's none of the language's business. Neither is [Authentik](https://goauthentik.io/), or my domain, or the PUID that every [LinuxServer.io](https://www.linuxserver.io/) image asks for. If I move to Caddy tomorrow that's a file I write, not a compiler I fork.
 
-- `defaults` sits at the bottom, where it always loses;
-- then the templates you list in `with`, left to right; and finally
-- the service's own body, which beats everything.
+The `docker_network` line is my favorite small piece of this. It reads the network's real Docker name out of the declaration rather than making me repeat it - and it's the exact label I once misspelled as `traefiki`.
 
-Two templates disagreeing is the interesting case. Rather than picking a winner, the compiler refuses:
+### Two templates, one label
 
-```
-p2f.hll:2:22: field `restart.policy` set by both template `a` (at p2f.hll:1:22) and template `b`—explicit templates must not conflict
-```
-
-### Generic core, specific templates
-
-So how do I decide whether something belongs in the compiler? The test I keep coming back to is whether it would make sense on a homelab with completely different infrastructure, and most of the time the answer is no.
-
-That's why there's no `auth` keyword. The `authenticated` template up there lives in my own files, and nothing inside `hllc` has heard of [Authentik](https://goauthentik.io/), or my domain, or the PUID that every [LinuxServer.io](https://www.linuxserver.io/) image asks for. The compiler knows Compose and Traefik, and my own conventions live in files I can edit without recompiling anything.
-
-You can put those templates and networks in a file of their own and pull them in by name. There's one catch - `defaults` only ever gets looked up in the entry file, so it's the one template you can't move out of the way:
+Middlewares are where the design earns its keep. Both of these write the same label key:
 
 ```
-use "common.hll" as common
+template internal_only {
+  labels { "traefik.http.routers.{{name}}.middlewares": ["local-ipwhitelist@file"] }
+}
 
-service bookstack {
-  with common.linuxserver_app { puid: 1000, pgid: 1000 }
-  networks [common.traefik-net]
-  image "lscr.io/linuxserver/bookstack:latest"
-  expose 80 as "wiki.techdebtor.io"
+template authenticated {
+  labels { "traefik.http.routers.{{name}}.middlewares": ["forwardAuth-authentik@file"] }
 }
 ```
+
+Apply both and they combine rather than fight:
+
+```yaml
+    - traefik.http.routers.syncthing.middlewares=local-ipwhitelist@file,forwardAuth-authentik@file
+```
+
+The brackets are doing that. A single value says the key holds one thing, so two templates setting it are two answers to a one-answer question and `hllc` refuses the pair (I checked - it does). A list says the key holds several, so several places contributing is the entire point. Which leaves `authenticated` as a standalone unit I can mix into anything, and that turned out to be the property I actually wanted.
 
 ### The escape hatch
 
@@ -167,7 +109,7 @@ There are Compose keys `hll` has no field for, and there always will be, so `raw
 ```
 service jellyfin {
   image "jellyfin/jellyfin:latest"
-  expose 8096 as "media.techdebtor.io"
+  expose 8096
   devices "/dev/dri" -> "/dev/dri"
   raw {
     group_add: ["video"]
@@ -175,23 +117,20 @@ service jellyfin {
 }
 ```
 
-Both of them land in the output untouched, and I get hardware transcoding without the grammar ever needing to learn what a video group is!
-
-There's one sharp edge here and I found it the hard way, which is where this blog gets most of its material. `raw { labels: ... }` *replaces* the computed Traefik labels instead of adding to them, so a service with routers loses all of them. It warns about that now:
+One sharp edge, found the hard way, which is where this blog gets most of its material. `raw { labels: ... }` *replaces* the computed labels instead of adding to them, so a service with routing loses all of it. It warns about that now:
 
 ```
-rawlabels.hll:5:5: warning: `raw { labels: ... }` replaces service `jellyfin`'s
-generated Traefik labels rather than adding to them, so every label `router`,
-`expose`, and `traefik` would have produced is dropped — use a `labels { ... }`
-block to add labels to the computed set instead, or reproduce the ones you still
-need in this list
+rawlabels.hll:6:5: warning: `raw { labels: ... }` replaces service `jellyfin`'s
+computed labels rather than adding to them, so every entry its `labels` blocks and
+the templates it applies would have produced is dropped — write the extra labels in
+a `labels { ... }` block instead, or reproduce the ones you still need in this list
 ```
 
 Writing that warning took me less time than working the behavior out a second time would have (the second time is always somehow worse than the first).
 
 ### Next
 
-Next post goes inside the compiler - the token stream, the parser, and that one reserved word I owe you. If you'd rather read real documentation than wait around for me, [the user guide](https://travisboettcher.github.io/hl-lang/) covers every field, and the [design doc](https://github.com/travisboettcher/hl-lang/blob/main/docs/DESIGN.md) has the formal grammar behind it.
+Next post goes inside the compiler - the token stream, the parser, and the table that makes all of this one function instead of thirty. If you'd rather read real documentation than wait around for me, [the user guide](https://travisboettcher.github.io/hl-lang/) covers every field, and the [design doc](https://github.com/travisboettcher/hl-lang/blob/main/docs/DESIGN.md) has the formal grammar behind it.
 
 ---
 

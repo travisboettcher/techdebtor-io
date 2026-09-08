@@ -1,11 +1,11 @@
 ---
 title: "33,000 Lines I Didn't Type"
-date: 2026-10-01
+date: 2026-10-08
 draft: true
 tags: ["Home Lab", "Rust"]
 ---
 
-That's five posts and about three weeks, so here's where it all landed. I started `hll` in the middle of August. By the end of the month I had a working compiler, 58 tagged releases, and a repository I had directed rather than written - which is a strange thing to say about your own side project! Let me explain why I think it worked, and then show you the bill.
+That's five posts, so here's where it all landed. I started `hll` in the middle of August, and by the end of the month I had a working compiler, 58 tagged releases, and a repository I had directed rather than written - which is a strange thing to say about your own side project! Let me explain why I think it worked, and then show you the bill.
 
 ### The numbers
 
@@ -62,7 +62,7 @@ And then re-read my own design doc, which I clearly should have been doing all a
 
 ### That's the series
 
-Five posts: why I built [the thing in the first place](/posts/i-wrote-a-language-for-my-homelab/), [what you write in it](/posts/writing-services-in-hll/), [what's inside it](/posts/taking-my-compiler-apart/), [how I designed it for a model to write](/posts/designing-a-language-for-a-machine-to-write/), and this.
+Six posts: why I built [the thing in the first place](/posts/i-wrote-a-language-for-my-homelab/), [what you write in it](/posts/writing-services-in-hll/), [what's inside it](/posts/taking-my-compiler-apart/), [how I designed it for a model to write](/posts/designing-a-language-for-a-machine-to-write/), [the month I spent taking a feature back out](/posts/taking-traefik-back-out/), and this.
 
 It still runs on one architecture only, and there's a 1.0 I keep walking toward. The 33 files that started all of this are migrated, though. Migrating them is also where most of the features came from - every file I moved over turned up something the language couldn't say yet. Which is a better way to build a language than designing it all up front, and not even slightly the way I'd have told you I was going to do it :)
 

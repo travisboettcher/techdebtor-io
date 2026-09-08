@@ -82,9 +82,9 @@ validating out.yaml: services.s additional properties 'imag' not allowed
 
 My own compiler talked me out of a caught error and into an uncaught one. I'm oddly delighted by that, and I'd never have found it if I hadn't gone looking for something to admit.
 
-### One more to go
+### Two more to go
 
-The last post is the other half of this one - and the one where I have to account for myself, since that's three weeks, an agent, and 33,000 lines of Rust I did not type. If you want the grammar before then, it's all in [docs/DESIGN.md](https://github.com/travisboettcher/hl-lang/blob/main/docs/DESIGN.md).
+The next one is the strangest thing that happened to this project: I spent a month taking a feature back out, and found out what my compiler had been missing the whole time. Then the last post, where I have to account for myself. If you want the grammar before either, it's all in [docs/DESIGN.md](https://github.com/travisboettcher/hl-lang/blob/main/docs/DESIGN.md).
 
 ---
 

@@ -27,7 +27,7 @@ Copy-paste doesn't just spread mistakes, it spreads whichever version I happened
 
 And then the one that isn't cosmetic. Some of my services declare `depends_on` and wait only for the dependency's container to start, while others properly wait for its healthcheck to pass. [Gitea](https://about.gitea.com/), [Wallabag](https://www.wallabag.it/en) and AdventureLog are in the first group; [n8n](https://n8n.io/), Sharry, Wanderer, [Authentik](https://goauthentik.io/) and [Miniflux](https://miniflux.app/) are in the second. Same intent, two different behaviors, and a startup race sitting in the first group that I have so far only been lucky enough to avoid.
 
-Every one of those is a decision I made once, correctly, and then never carried over to my other 32 files. The right way to do things lives in my head, and I re-type it from scratch every single time.
+Every one of those is a decision I made once, correctly, and then never carried over to my other 32 files. The right way lives in my head, and I re-type it from scratch every time.
 
 ### So I wrote a compiler
 
@@ -69,7 +69,7 @@ services:
 
 The best part of that output is what isn't in the input. I never typed a label. Both of those keys fall out of that one `with` line, and label keys are exactly where all three of my bugs were.
 
-That `std:traefik` is worth a second look, because it isn't part of the language. It's a set of templates that ship inside the compiler, and `hllc` itself has never heard of Traefik - it knows how to write labels and nothing about what they mean. The distinction turned out to matter a great deal more than I expected it to, and it gets a post of its own later on.
+That `std:traefik` is worth a second look, because it isn't part of the language I wrote. It's a set of templates that ship inside the compiler, and my compiler knows how to write a label and nothing about what one means. I did not expect that distinction to matter as much as it did, and it gets a post of its own later.
 
 I didn't build anything clever here, either - `hllc` reads a file and writes a Compose file, and that's about it. What comes out the other end is ordinary YAML that I can read, check into git, and run without `hllc` being anywhere nearby, which was the one thing I refused to compromise on!
 
@@ -110,8 +110,9 @@ The next few posts get into the parts I most enjoyed building:
 
 - what the language looks like to write;
 - what's inside the compiler, which turned out to be far more approachable than I'd assumed;
-- how I designed it for Claude to write; and finally,
-- what three weeks of building it with an agent actually looked like.
+- how I designed it for Claude to write;
+- the month I spent removing a feature, and what that turned up; and finally,
+- what building the whole thing with an agent actually looked like.
 
 One last note: it's all up at [github.com/travisboettcher/hl-lang](https://github.com/travisboettcher/hl-lang) if you want to poke at it, or just see how questionable my Rust is. It hasn't reached 1.0 yet, and so far it has only ever been tested against a homelab of exactly one person.
 

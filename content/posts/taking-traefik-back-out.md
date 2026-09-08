@@ -43,6 +43,11 @@ Interpolation used to cover a service's own name and nothing else. So both of th
 template t(host) {
   labels { "traefik.http.routers.{{name}}.rule": "Host(`$host`)" }
 }
+
+service web {
+  image "nginx"
+  with t { host: "web.techdebtor.io" }
+}
 ```
 
 That compiled, and wrote ``Host(`$host`)`` straight into the label, which Traefik reads as a router matching a machine literally named `$host`. A rule that looks right, compiles clean, and never matches a single thing for the rest of its life!

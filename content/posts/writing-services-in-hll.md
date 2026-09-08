@@ -48,6 +48,11 @@ So you write it once. Here's [Paperless](https://docs.paperless-ngx.com/), and I
 ```
 use "std:traefik" as traefik
 
+network proxy {
+  external
+  name: "docker_default"
+}
+
 template linuxserver_app(puid, pgid) {
   env PUID = $puid
   env PGID = $pgid
@@ -65,7 +70,7 @@ service paperless {
 
 Parameters are declared bare (no types to write - the field a value lands in does the checking) and referenced with a `$`. Changing my mind about a convention is now one edit instead of 33 reviews.
 
-### The part I didn't see coming
+Here are the labels that come out of that, with the rest of the service left off:
 
 ```yaml
     labels:
@@ -74,7 +79,9 @@ Parameters are declared bare (no types to write - the field a value lands in doe
     - traefik.docker.network=docker_default
 ```
 
-`traefik.http` is a template. Not a keyword, not a field, not a thing the compiler knows about - a template, invoked through the same `with` as the one I wrote myself two paragraphs ago. `std:traefik` ships inside the `hllc` binary, so there's no file to vendor and no path to get right - but that's a delivery convenience and nothing more. My compiler has never heard of Traefik.
+### The part I didn't see coming
+
+Look at that first line again. `traefik.http` is a template. Not a keyword, not a field, not a thing the compiler knows about - a template, invoked through the same `with` as the one I wrote myself two paragraphs ago. `std:traefik` ships inside the `hllc` binary, so there's no file to vendor and no path to get right - but that's a delivery convenience and nothing more. My compiler has never heard of Traefik.
 
 That gets a whole post later on (it wasn't always true, and the getting there is the strangest thing that's happened to this project). What matters here is the test it came out of: would this make sense on a homelab with completely different infrastructure? A `router` field only means something if you happen to run Traefik, so it's none of the language's business. Neither is [Authentik](https://goauthentik.io/), or my domain, or the PUID that every [LinuxServer.io](https://www.linuxserver.io/) image asks for. If I move to Caddy tomorrow that's a file I write, not a compiler I fork.
 
@@ -92,9 +99,14 @@ template internal_only {
 template authenticated {
   labels { "traefik.http.routers.{{name}}.middlewares": ["forwardAuth-authentik@file"] }
 }
+
+service syncthing {
+  image "lscr.io/linuxserver/syncthing:latest"
+  with internal_only, authenticated
+}
 ```
 
-Apply both and they combine rather than fight:
+Apply both and they combine rather than fight - here's the one label they produce between them:
 
 ```yaml
     - traefik.http.routers.syncthing.middlewares=local-ipwhitelist@file,forwardAuth-authentik@file

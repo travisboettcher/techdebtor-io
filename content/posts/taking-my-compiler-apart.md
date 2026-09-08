@@ -5,7 +5,7 @@ draft: true
 tags: ["Home Lab", "Rust"]
 ---
 
-Two posts in and I still owe you a reserved word. This one is about everything that happens between the file I write and the YAML I deploy, which is the half of the project I had the most fun with.
+Two posts in and I still owe you the inside of the thing. This one is about everything that happens between the file I write and the YAML I deploy, which is the half of the project I had the most fun with.
 
 ### Five stages, and you can watch the first two
 
@@ -16,14 +16,14 @@ Start with seven lines of `hll`:
 ```
 service jellyfin {
   image "jellyfin/jellyfin:latest"
-  expose 8096 as "media.techdebtor.io"
+  expose 8096
   volume "/mnt/media" -> "/data"
   env PUID = "1000"
   restart unless-stopped
 }
 ```
 
-`hllc tokens` gives me what the lexer made of that, which is 21 tokens carrying a line and column each:
+`hllc tokens` gives me what the lexer made of that, which is 19 tokens carrying a line and column each:
 
 ```
 1:1 Ident "service"
@@ -33,8 +33,6 @@ service jellyfin {
 2:9 Str "jellyfin/jellyfin:latest"
 3:3 Ident "expose"
 3:10 Number "8096"
-3:15 Ident "as"
-3:18 Str "media.techdebtor.io"
 4:3 Ident "volume"
 4:10 Str "/mnt/media"
 4:23 Arrow "->"
@@ -49,9 +47,9 @@ service jellyfin {
 8:1 Eof ""
 ```
 
-Look at what my lexer makes of `service`, `image`, `expose` and `restart` - they're all just `Ident`, and so are `as` and `unless-stopped`. At this stage the compiler has no idea it's looking at a service at all. (My lexer is not a clever piece of software, and that is very much the point.)
+Look at what my lexer makes of `service`, `image`, `expose` and `restart` - they're all just `Ident`, and so is `unless-stopped`. At this stage the compiler has no idea it's looking at a service at all. (My lexer is not a clever piece of software, and that is very much the point.)
 
-`hllc parse` runs the same file through the parser and prints the tree. Here are the first eleven lines, and there are 242 more:
+`hllc parse` runs the same file through the parser and prints the tree. Here are the first eleven lines, and there are 206 more:
 
 ```
 Program {
@@ -67,60 +65,58 @@ Program {
                         col: 9,
 ```
 
-Most of that bulk is spans. Every node carries the byte offsets, line, column and file it came from, which is what lets a diagnostic point at the exact thing you got wrong instead of shrugging vaguely about line 4. (253 lines to describe one container named jellyfin. worth it, i promise.)
+Most of that bulk is spans. Every node carries the byte offsets, line, column and file it came from, which is what lets a diagnostic point at the exact thing you got wrong instead of shrugging vaguely about line 4. (217 lines to describe one container named jellyfin. worth it, i promise.)
 
-Then `hllc build` walks that tree and writes the 15 lines of Compose YAML I showed you two posts ago. Seven lines in, 21 tokens, 253 lines of tree, 15 lines back out, and the whole round trip runs in about three milliseconds!
+Then `hllc build` walks that tree and writes twelve lines of Compose YAML. Seven lines in, 19 tokens, 217 lines of tree, twelve lines back out, and the whole round trip runs in about three milliseconds!
 
-### The one reserved word
+### The word that held out longest
 
-Here's the thing I've been promising since post 1. The entire language reserves exactly one word, and it's `template`. Everything else you might take for a keyword is an ordinary identifier the parser looks up in a table, which means you can name your own things after them:
+Here's the thing I've been promising since post 1. My language reserves **no words at all**. Everything you might take for a keyword is an ordinary identifier the parser looks up in a table, so I can name my own things after any of them:
 
 ```
 network service {}
 network image {}
 network expose {}
 network with {}
-network as {}
+network template {}
+
+template template {
+  restart unless-stopped
+}
 
 service router {
   image "nginx"
-  networks [service, image, expose, with, as]
+  networks [service, image, expose, with, template]
+  with template
 }
 ```
 
-That compiles without a complaint, and here's the proof - a service called `router`, sitting on five networks named after the language!
+That compiles without a complaint. Here's the proof - a service called `router`, sitting on five networks named after the language, picking up a template called `template`:
 
 ```yaml
 services:
   router:
     image: nginx
+    restart: unless-stopped
     networks:
     - service
     - image
     - expose
     - with
-    - as
+    - template
+networks:
+  service: {}
+  image: {}
+  expose: {}
+  with: {}
+  template: {}
 ```
 
-Try it with the one real keyword, though, and you get told off:
+`with`, `as`, `use`, `external` and `template` only mean anything in the grammar position where they're expected, which is the same trick C# plays with `var` and `async`. It cost me nothing to do it this way - and it means I never have to break one of my own files just because I wanted a new field name.
 
-```
-res.hll: 1:9: expected an identifier, found `template`
-```
+`template` is the one that held out, right up until I sat down to write this series. It survived that long on a reason that sounds fine and isn't. It sits at the front of a top-level declaration - the point where my parser decides what it's about to parse at all - rather than inside a rule the parser has already committed to. So the table would have been picking the production instead of checking one, and I told myself that was different enough to be worth a word.
 
-`with`, `as`, `use` and `external` only mean anything in the grammar position where they're expected, which is the same trick C# plays with `var` and `async`. It cost me nothing to do it this way - and it means I never have to break one of my own files just because I wanted a new field name.
-
-So why not `template` as well? The difference is where it sits. Those four turn up inside a rule the parser has already committed to, so all it does there is check whether this word is the one it expected. `template` sits at the front of a top-level declaration - the point where the parser decides what it's parsing at all - and it's the only declaration that takes a parameter list, so it doesn't fit the ordinary `<type> <name> { ... }` shape:
-
-```
-$ cat t.hll
-network foo(a) {}
-
-$ hllc check t.hll
-t.hll: 1:12: expected `{`, found `(`
-```
-
-I could probably have given it a schema row and looked it up like everything else. I reserved it because the declaration head is the one position where the table would be picking the rule rather than checking it, and one reserved word felt cheaper than finding out later that it wasn't. The bill is a service I can't name `template` - which I have so far survived.
+What killed it was having to write the sentence down. My syntax chapter came out as "there are no keywords, except this one," and I couldn't make that read like a decision rather than an accident. Dispatch was already guarded by the lexeme anyway, so making it contextual touched five places and left every diagnostic byte-identical. The rule holds without a footnote now, which is what I should have wanted all along :)
 
 ### The table
 
@@ -145,7 +141,7 @@ pub static IMAGE: TypeSchema = TypeSchema {
 
 `primary_field` is what makes `image "nginx"` work without a body - a bare value after the type name sets that one field. `map_separator` is the other one worth knowing about - it's why `volume` uses `->` and `env` uses `=`.
 
-I'd love to tell you that adding a field to the language is just adding a row here. It mostly isn't. A new field is a row in this table, plus an arm that lowers it into the tree, plus a slot in the merge code so templates know what to do with it, plus an arm in codegen, plus quite a lot of tests. What the table buys me is that none of those is a new *parsing* function - the block parser never changes. (Exactly one field in the whole language still gets bespoke parser code, and it's the `as` in `expose 8096 as "..."`. I have made my peace with it.)
+I'd love to tell you that adding a field to the language is just adding a row here. It mostly isn't. A new field is a row in this table, plus an arm that lowers it into the tree, plus a slot in the merge code so templates know what to do with it, plus an arm in codegen, plus quite a lot of tests. What the table buys me is that none of those is a new *parsing* function - the block parser never changes. (Two fields still get bespoke parser code. One is `labels`, which earned it by being the only map field whose values are allowed to be lists. The other is `expose`, and its special case now exists purely to spot a piece of sugar I deleted and say where it went - a production whose entire job is to be a good error message for a syntax that isn't in the language any more.)
 
 ### What writing the grammar down actually caught
 

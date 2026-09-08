@@ -15,30 +15,13 @@ The obvious moves came first, and I think they're the least interesting:
 
 - keep the shapes close to Compose and YAML, since that's what's already dense in anything a model has read;
 - name every field, so nothing depends on argument order (there is no `expose(80, "host", true)` in this language, and I'm glad of it); and finally,
-- put my shared conventions in a `defaults` template anyone can open and read, instead of leaving them as things I happen to know.
+- put my shared conventions in templates anyone can open and read, instead of leaving them as things I happen to know.
 
-Then there's the rule I wrote down and did not keep: **one canonical way to say each thing.** I believed that one. Multiple spellings of the same config give you inconsistent generations, and inconsistent generations are how I ended up with the drifting Compose files I complained about in [post 1](/posts/i-wrote-a-language-for-my-homelab/). Here I am breaking it. First the sugar:
+Then there's the rule I wrote down and then broke within the week: **one canonical way to say each thing.** I believed that one. Multiple spellings of the same config give you inconsistent generations, and inconsistent generations are how I ended up with the drifting Compose files I complained about in [post 1](/posts/i-wrote-a-language-for-my-homelab/). Then I shipped a piece of sugar for routing, kept the longhand alongside it, checked that the two produced byte-identical output, and told myself I'd kept the sugar because I liked writing it. Which is an argument about my own convenience, made while designing a language for something else to use.
 
-```
-service s {
-  image "n"
-  expose 80 as "h.example.com"
-}
-```
+Both spellings are gone now. Not because I came to my senses about the rule - because routing turned out not to belong in the language at all, and took its two spellings with it when it left. I got the outcome the rule asked for and none of the credit, which is roughly what I deserved.
 
-And here's the longhand, which I also kept:
-
-```
-service s {
-  image "n"
-  expose 80
-  router {
-    host: "h.example.com"
-  }
-}
-```
-
-Those two produce byte-identical output - I checked, and I was slightly hoping they wouldn't! I kept the sugar because I like writing it, which is an argument about my own convenience that I made while designing a language for something else to use. (I still think it was right. It's also not the only place I broke the rule - the shorthand that lets me write `image "nginx"` instead of `image { ref: "nginx" }` breaks it everywhere.)
+(I'm still breaking it elsewhere, mind you - the shorthand that lets me write `image "nginx"` instead of `image { ref: "nginx" }` breaks it everywhere, and I have no plans to remove that one.)
 
 ### The loop matters more than the grammar
 
@@ -48,7 +31,7 @@ So which of those actually mattered? Not the grammar, as it turns out. My gramma
 
 I'll give my design notes credit, too. They ranked the tooling ideas above the grammar ideas at the time, under a heading that says so in as many words. What I got wrong was which tooling.
 
-Because if the compiler is going to answer back, what it *says* starts to matter enormously. My favorite one in the whole compiler catches a comma that would change a Traefik label's meaning without telling anyone - and rather than just refusing, it tells me exactly what to write instead:
+Because if the compiler is going to answer back, what it *says* starts to matter enormously. My favorite one used to catch a comma that would change a Traefik label's meaning without telling anyone - and rather than just refusing, it told me exactly what to write instead:
 
 ```
 b.hll:6:18: `router.entrypoints` must not contain ',' — it would change the
@@ -57,7 +40,9 @@ the entry points as separate items (`entrypoints web, websecure`) and let
 `hllc` join them
 ```
 
-I wrote that for me, on the theory that future-me would be baffled. It works just as well on a model, and I never had to change a word of it! The repair is in the message, so nobody has to go and read the spec to make progress. That's the whole trick, and I don't think it's really an AI trick.
+I wrote that for me, on the theory that future-me would be baffled. It worked just as well on a model, and I never had to change a word of it. The repair is in the message, so nobody has to go and read the spec to make progress. That's the whole trick, and I don't think it's really an AI trick.
+
+Past tense, because it doesn't exist any more. Routing left the compiler a few weeks ago, and that message was only ever possible while `hllc` knew what an entry point was. Hand it the same comma today and it writes the label out and says nothing - a label value is a string, and a string with a comma in it is a perfectly good string! The trade was worth making, since the alternative is my compiler chasing somebody else's syntax across their releases forever. It still cost something, and I'd rather write that down than pretend it didn't.
 
 ### What I planned and didn't build
 
@@ -67,7 +52,7 @@ There's one more I still haven't written: the `explain` command I keep promising
 
 ### Values
 
-Field names are always checked. Values get checked where the legal set is short and closed, so I get told off for a bad router protocol or a bad `depends_on` condition. Everywhere else I'm on my own, and `restart` is the gap that bothers me most:
+Field names are always checked. Values get checked where the legal set is short and closed, so a mistyped `depends_on` condition gets me told off by name. Everywhere else I'm on my own, and `restart` is the gap that bothers me most:
 
 ```
 service s {

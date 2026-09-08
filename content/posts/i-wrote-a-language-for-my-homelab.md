@@ -36,12 +36,14 @@ So what did I actually want here? To describe what's different about a service, 
 Here's an entire service:
 
 ```
+use "std:traefik" as traefik
+
 service jellyfin {
   image "jellyfin/jellyfin:latest"
-  expose 8096 as "media.techdebtor.io"
   volume "/mnt/media" -> "/data"
   env PUID = "1000"
   restart unless-stopped
+  with traefik.http { host: "media.techdebtor.io", port: 8096 }
 }
 ```
 
@@ -65,11 +67,13 @@ services:
     - traefik.http.services.jellyfin.loadbalancer.server.port=8096
 ```
 
-The best part of that output is what isn't in the input. I never typed the word `traefik` at all! The router rule and the load balancer port both fall out of that one `expose ... as` line, so there's nothing left for me to misspell.
+The best part of that output is what isn't in the input. I never typed a label. Both of those keys fall out of that one `with` line, and label keys are exactly where all three of my bugs were.
+
+That `std:traefik` is worth a second look, because it isn't part of the language. It's a set of templates that ship inside the compiler, and `hllc` itself has never heard of Traefik - it knows how to write labels and nothing about what they mean. The distinction turned out to matter a great deal more than I expected it to, and it gets a post of its own later on.
 
 I didn't build anything clever here, either - `hllc` reads a file and writes a Compose file, and that's about it. What comes out the other end is ordinary YAML that I can read, check into git, and run without `hllc` being anywhere nearby, which was the one thing I refused to compromise on!
 
-For the divergence problem there's a `defaults` block, a template that gets applied to every service automatically and always loses to anything a service says for itself. `restart unless-stopped` lives in there once instead of getting retyped in every service, so when I change my mind about a convention, I change it in one place.
+For the divergence problem there are templates. A template is a named bag of fields, and a service picks up the ones it lists in `with` - so `restart unless-stopped` gets written once instead of retyped across 33 files, and when I change my mind about a convention I change it in the one place.
 
 ### Diagnostics
 

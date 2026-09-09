@@ -1,8 +1,9 @@
 ---
 title: "I Wrote a Language for My Homelab"
-date: 2026-09-03
-draft: true
+date: 2026-09-09
+draft: false
 tags: ["Home Lab", "Rust"]
+hero_image: "https://images.unsplash.com/photo-1696454595486-bdb174df034e?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 Three years ago I wrote about [managing containers with Docker Compose](/posts/docker-compose/) and [pointing Traefik at them](/posts/traefik-setup/), and both of those posts are still more or less how I do things. This is the first of a few posts about what happened when I finally got tired of doing it all by hand.

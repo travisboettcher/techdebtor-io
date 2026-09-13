@@ -129,10 +129,24 @@ service jellyfin {
 }
 ```
 
-One sharp edge, found the hard way, which is where this blog gets most of its material. `raw { labels: ... }` *replaces* the computed labels instead of adding to them, so a service with routing loses all of it. It warns about that now:
+One sharp edge, found the hard way, which is where this blog gets most of its material. `raw { labels: ... }` *replaces* the computed labels instead of adding to them, so a service with routing loses all of it without a word:
 
 ```
-rawlabels.hll:6:5: warning: `raw { labels: ... }` replaces service `jellyfin`'s
+use "std:traefik" as traefik
+
+service jellyfin {
+  image "jellyfin/jellyfin:latest"
+  with traefik.http { host: "media.techdebtor.io", port: 8096 }
+  raw {
+    labels: ["com.example.owner=me"]
+  }
+}
+```
+
+Both routing labels are gone from the output, and the only one left is the one I wrote by hand. It warns about that now:
+
+```
+rawlabels.hll:7:5: warning: `raw { labels: ... }` replaces service `jellyfin`'s
 computed labels rather than adding to them, so every entry its `labels` blocks and
 the templates it applies would have produced is dropped — write the extra labels in
 a `labels { ... }` block instead, or reproduce the ones you still need in this list

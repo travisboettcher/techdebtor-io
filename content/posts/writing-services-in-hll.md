@@ -1,8 +1,9 @@
 ---
 title: "Writing Services in hll"
-date: 2026-09-10
-draft: true
+date: 2026-09-13
+draft: false
 tags: ["Home Lab", "Rust"]
+hero_image: "https://images.unsplash.com/photo-1533226458520-6f71cffeaa6a?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 Last post I covered why I wrote a compiler for my homelab, which was mostly 33 Compose files that had drifted apart from each other over three years. This one is about what you actually write in `hll`. I'll leave the field-by-field details to [the user guide](https://travisboettcher.github.io/hl-lang/) and just walk through the shapes I use most.
@@ -129,10 +130,24 @@ service jellyfin {
 }
 ```
 
-One sharp edge, found the hard way, which is where this blog gets most of its material. `raw { labels: ... }` *replaces* the computed labels instead of adding to them, so a service with routing loses all of it. It warns about that now:
+One sharp edge, found the hard way, which is where this blog gets most of its material. `raw { labels: ... }` *replaces* the computed labels instead of adding to them, so a service with routing loses all of it without a word:
 
 ```
-rawlabels.hll:6:5: warning: `raw { labels: ... }` replaces service `jellyfin`'s
+use "std:traefik" as traefik
+
+service jellyfin {
+  image "jellyfin/jellyfin:latest"
+  with traefik.http { host: "media.techdebtor.io", port: 8096 }
+  raw {
+    labels: ["com.example.owner=me"]
+  }
+}
+```
+
+Both routing labels are gone from the output, and the only one left is the one I wrote by hand. It warns about that now:
+
+```
+rawlabels.hll:7:5: warning: `raw { labels: ... }` replaces service `jellyfin`'s
 computed labels rather than adding to them, so every entry its `labels` blocks and
 the templates it applies would have produced is dropped — write the extra labels in
 a `labels { ... }` block instead, or reproduce the ones you still need in this list

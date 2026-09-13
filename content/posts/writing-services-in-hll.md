@@ -1,8 +1,9 @@
 ---
 title: "Writing Services in hll"
-date: 2026-09-10
-draft: true
+date: 2026-09-13
+draft: false
 tags: ["Home Lab", "Rust"]
+hero_image: "https://images.unsplash.com/photo-1533226458520-6f71cffeaa6a?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 Last post I covered why I wrote a compiler for my homelab, which was mostly 33 Compose files that had drifted apart from each other over three years. This one is about what you actually write in `hll`. I'll leave the field-by-field details to [the user guide](https://travisboettcher.github.io/hl-lang/) and just walk through the shapes I use most.

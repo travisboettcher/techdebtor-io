@@ -1,8 +1,9 @@
 ---
 title: "Taking My Compiler Apart"
-date: 2026-09-17
-draft: true
+date: 2026-09-20
+draft: false
 tags: ["Home Lab", "Rust"]
+hero_image: "https://images.unsplash.com/photo-1727119313390-9e7737d8fc1c?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 Two posts in and I still owe you the inside of the thing. This one is about everything that happens between the file I write and the YAML I deploy, which is the half of the project I had the most fun with.

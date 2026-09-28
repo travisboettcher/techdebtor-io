@@ -1,8 +1,9 @@
 ---
 title: "Designing a Language for a Machine to Write"
-date: 2026-09-24
-draft: true
+date: 2026-09-28
+draft: false
 tags: ["Home Lab", "Rust"]
+hero_image: "https://images.unsplash.com/photo-1711346105258-bbb9136592d7?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 This project started because I wanted to learn how to build a language. The homelab came second - I needed something worth compiling, and I had 33 [Docker Compose](https://docs.docker.com/compose/) files that were already a mess. What I didn't plan for was the third thing, which is that by the time I was sketching the grammar it was obvious Claude would be writing most of the `.hll` files rather than me. So I stopped asking what I wanted to type, and started asking what a model would get right on the first try.

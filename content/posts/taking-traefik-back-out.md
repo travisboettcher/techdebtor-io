@@ -1,8 +1,9 @@
 ---
 title: "Taking Traefik Back Out"
-date: 2026-10-01
-draft: true
+date: 2026-10-05
+draft: false
 tags: ["Home Lab", "Rust"]
+hero_image: "https://images.unsplash.com/photo-1784392087865-669ffdfc71ff?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 Two posts ago I said routing wasn't part of my language - and that it hadn't always been true. This is that story. The question sat in my issue tracker for three weeks; the deletion itself took four days, and to get it out I had to ship five features that had nothing to do with it.

@@ -1,0 +1,14 @@
+{{- /* A row of small xword figures with one shared caption. Usage:
+  {{< xword-group caption="..." >}} {{< xword size="sm" rows="..." >}} ... {{< /xword-group >}}
+  cols: optional fixed number of columns (otherwise the figures wrap freely)
+*/ -}}
+<figure class="xw-group">
+  {{- with .Get "cols" }}
+  <div class="xw-group-row xw-group-cols" style="--group-cols: {{ . | safeCSS }}">{{ $.Inner }}</div>
+  {{- else }}
+  <div class="xw-group-row">{{ .Inner }}</div>
+  {{- end }}
+  {{- with .Get "caption" }}
+  <figcaption>{{ . | markdownify }}</figcaption>
+  {{- end }}
+</figure>

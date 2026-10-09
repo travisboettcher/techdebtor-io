@@ -1,0 +1,34 @@
+{{- /*
+  A crossword grid drawn in HTML/CSS.
+  rows:    rows separated by "/", one character per cell:
+           # black   c checked (in an across and a down word)   u unchecked (one word only)
+           . white (not yet classified)   ? not placed yet   x a rule-breaking cell
+  caption: optional, Markdown allowed
+  dim:     optional comma-separated row numbers to fade (e.g. "0,1")
+  legend:  "true" to show the key for c / u cells
+  size:    "sm" for the small version used inside xword-group
+*/ -}}
+{{- $rows := split (.Get "rows") "/" -}}
+{{- $n := len (index $rows 0) -}}
+{{- $dim := split (.Get "dim" | default "") "," -}}
+{{- $kind := dict "#" "b" "c" "c" "u" "u" "." "w" "?" "q" "x" "x" -}}
+{{- $label := .Get "label" | default (printf "%d by %d crossword grid" $n (len $rows)) -}}
+<figure class="xw-figure{{ with .Get "size" }} xw-{{ . }}{{ end }}">
+  <div class="xw" style="--cols: {{ $n }}" role="img" aria-label="{{ $label }}">
+    {{- range $i, $r := $rows -}}
+      {{- $faded := in $dim (string $i) -}}
+      {{- range split $r "" -}}
+        <span class="xw-cell xw-{{ index $kind . }}{{ if $faded }} xw-dim{{ end }}"></span>
+      {{- end -}}
+    {{- end -}}
+  </div>
+  {{- with .Get "caption" }}
+  <figcaption>{{ . | markdownify }}</figcaption>
+  {{- end }}
+  {{- if eq (.Get "legend") "true" }}
+  <div class="xw-legend" aria-hidden="true">
+    <span><span class="xw-cell xw-c"></span> checked: in an across word and a down word</span>
+    <span><span class="xw-cell xw-u"></span> unchecked: in one word only</span>
+  </div>
+  {{- end }}
+</figure>

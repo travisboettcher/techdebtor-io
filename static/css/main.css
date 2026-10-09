@@ -312,3 +312,263 @@ time {
   padding: 0;
   font-size: inherit;
 }
+
+/* ── Crossword figures (shortcodes: xword, xword-group, xchart) ── */
+
+:root {
+  --xw-paper: #ffffff;
+  --xw-ink: #1c1917;
+  --xw-unchecked: #fbdccd;
+  --xw-dot: #b13f0e;
+  --xw-frame: #1c1917;
+  --xw-empty: #ece8e3;
+  --chart-mark: #e8571e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --xw-paper: #e8e3dc;
+    --xw-ink: #0d0b09;
+    --xw-unchecked: #f0bfa6;
+    --xw-dot: #9a360b;
+  --xw-frame: #6b6259;
+  --xw-empty: #3a342e;
+    --chart-mark: #e8571e;
+  }
+}
+
+:root[data-theme="light"] {
+  --xw-paper: #ffffff;
+  --xw-ink: #1c1917;
+  --xw-unchecked: #fbdccd;
+  --xw-dot: #b13f0e;
+  --xw-frame: #1c1917;
+  --xw-empty: #ece8e3;
+  --chart-mark: #e8571e;
+}
+
+:root[data-theme="dark"] {
+  --xw-paper: #e8e3dc;
+  --xw-ink: #0d0b09;
+  --xw-unchecked: #f0bfa6;
+  --xw-dot: #9a360b;
+  --xw-frame: #6b6259;
+  --xw-empty: #3a342e;
+  --chart-mark: #e8571e;
+}
+
+.xw-figure,
+.xw-group {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.xw-figure figcaption,
+.xw-group > figcaption,
+.xc figcaption {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+}
+
+.xw {
+  --cell: 28px;
+  display: inline-grid;
+  grid-template-columns: repeat(var(--cols), var(--cell));
+  grid-auto-rows: var(--cell);
+  gap: 1px;
+  background: var(--xw-ink);
+  border: 2px solid var(--xw-frame);
+}
+
+.xw-sm .xw {
+  --cell: 15px;
+}
+
+.xw-cell {
+  position: relative;
+  background: var(--xw-paper);
+}
+
+.xw-b { background: var(--xw-ink); }
+.xw-u { background: var(--xw-unchecked); }
+.xw-q { background: var(--xw-empty); }
+.xw-x { background: var(--chart-mark); }
+
+/* a dot marks unchecked cells, so they don't rely on colour alone */
+.xw-u::after,
+.xw-x::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 22%;
+  height: 22%;
+  border-radius: 50%;
+  background: var(--xw-dot);
+}
+
+.xw-x::after {
+  background: var(--xw-paper);
+  width: 30%;
+  height: 30%;
+}
+
+.xw-dim { opacity: 0.3; }
+
+.xw-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.5rem;
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.xw-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.xw-legend .xw-cell {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  outline: 1px solid var(--xw-ink);
+}
+
+.xw-group-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1rem 1.5rem;
+}
+
+.xw-group-row .xw-figure {
+  margin: 0;
+}
+
+.xw-group-row .xw-figure figcaption {
+  font-size: 0.8rem;
+  margin-top: 0.4rem;
+}
+
+.xw-arrow {
+  align-self: center;
+  color: var(--muted);
+  font-size: 1.5rem;
+}
+
+/* SVG charts: marks wear --chart-mark, text wears text tokens */
+.xc {
+  margin: 2rem 0;
+}
+
+.xc svg {
+  display: block;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  height: auto;
+  overflow: visible;
+}
+
+@media (max-width: 600px) {
+  .xc svg text {
+    font-size: 14px;
+  }
+}
+
+.xc-title {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: "Archivo", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  text-align: center;
+}
+
+.xc text {
+  fill: var(--muted);
+  font-family: "Work Sans", system-ui, sans-serif;
+  font-size: 12px;
+}
+
+.xc text.xc-value {
+  fill: var(--fg);
+  font-weight: 600;
+}
+
+.xc .xc-grid {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.xc .xc-axis {
+  stroke: var(--muted);
+  stroke-width: 1;
+}
+
+.xc .xc-mark {
+  fill: var(--chart-mark);
+}
+
+.xc .xc-line {
+  fill: none;
+  stroke: var(--chart-mark);
+  stroke-width: 2;
+}
+
+.xc .xc-ring {
+  stroke: var(--bg);
+  stroke-width: 2;
+}
+
+.xc .xc-hit {
+  fill: transparent;
+}
+
+.xc .xc-hover:hover .xc-mark {
+  opacity: 0.8;
+}
+
+.xc details {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.xc details table {
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.xc details th,
+.xc details td {
+  padding: 0.2rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+}
+
+.xc details th:first-child,
+.xc details td:first-child {
+  text-align: left;
+}
+
+.xw-group-cols {
+  display: grid;
+  grid-template-columns: repeat(var(--group-cols), max-content);
+  justify-content: center;
+}
+
+.xc figcaption,
+.xc details {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}

@@ -5,3 +5,4 @@ resources/_gen/
 .idea/
 .vscode/
 *.swp
+__pycache__/

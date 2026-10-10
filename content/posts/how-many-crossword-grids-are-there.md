@@ -6,9 +6,9 @@ tags: ["Rust", "Math", "Crosswords"]
 summary: "A voice memo, an open question from a 2026 paper, and the idea that turned 'list every grid' into 'count them without looking': there are 2,393,670,267,515,481 valid 15×15 British-style crossword grids."
 ---
 
-*Part 1 of a series on counting crossword grids. [Part 2](/posts/making-it-fit-then-making-it-fast/) · [Part 3](/posts/an-eleven-hour-run-on-a-rented-server/)*
+*Part 1 of a series on counting crossword grids.*
 
-Back in July I left myself a voice memo with a question in it: how many unique shapes are there for a 15×15 crossword? Not the clues, not the words, just the pattern of black and white squares. I figured it was a fun weekend puzzle. My first instinct was to write something that generates grids by mutating them and searches the space with a DFS or BFS, and just count what falls out.
+Back in July I was listening to [episode 138](https://pca.st/episode/868eb281-cbdb-4e36-818b-e1575e1f6582) of the podcast *A Problem Squared*, and it sent me off to leave myself a voice memo with a question in it: how many unique shapes are there for a 15×15 crossword? Not the clues, not the words, just the pattern of black and white squares. I figured it was a fun weekend puzzle. My first instinct was to write something that generates grids by mutating them and searches the space with a DFS or BFS, and just count what falls out.
 
 That instinct was wrong by about fifteen orders of magnitude. So let me skip to the end, because I've been sitting on this for a couple of weeks and I'm excited about it:
 
@@ -22,7 +22,7 @@ There are two big families of crossword. American-style grids (the New York Time
 
 {{< xword rows="cuc##ucuc/u#u###u#u/u#u###cuc/cucucuc#u/##u#u#u##/u#cucucuc/cuc###u#u/u#u###u#u/cucu##cuc" legend="true" label="A valid 9 by 9 British-style crossword grid with checked and unchecked squares marked" caption="A valid 9×9 British-style grid. Shaded squares with a dot are *unchecked*: they belong to only one word." >}}
 
-The rules I used come from Michael Keith's paper for the 16th Gathering 4 Gardner, *How many n×n British-style crossword grids are there?* (which is a great read, and the reason this project exists). Some of them apply to every crossword:
+The rules I used come from Michael Keith's paper for the 16th Gathering 4 Gardner, *How many n×n British-style crossword grids are there?*, which I first heard about on that same episode. Some of the rules apply to every crossword:
 
 - the grid looks the same when you turn it upside down (180° symmetry);
 - every white square is connected to every other one;
@@ -45,9 +45,7 @@ That second one surprised me: a fully checked word, which is the whole point of 
 
 Before writing any code, I went looking for whether this was already solved, and it half was. The American count is in the On-Line Encyclopedia of Integer Sequences ([A323839](https://oeis.org/A323839)), worked out all the way up to 21×21. There are 404,139,015,237,875 American 15×15 grids, so somebody had already done the hard work there.
 
-The British count was different. Keith's paper counts the British grids for 5×5 through 13×13, and stops: 15×15 is listed as an open question.
-<!-- TODO(Travis): check the "84 days on one core" and "roughly a thousand times" figures against the paper before publishing. -->
-By the paper's account, the 13×13 count alone took his program about 84 days on a single core, and each step up in size has been roughly a thousand times the work of the one before. So the size every newspaper actually uses was out of reach. That was the moment a weekend puzzle turned into a project!
+The British count was different. Keith's paper counts the British grids for 5×5 through 13×13, and stops: 15×15 is listed as an open question. So the size every newspaper actually uses had never been counted. That was the moment a weekend puzzle turned into a project!
 
 {{< xchart "growth" >}}
 
@@ -88,7 +86,7 @@ At 7×7 this barely matters: 2,371 top halves that can still become valid grids 
 
 There's one more saving from the symmetry rule. Since the bottom half is just the top half turned upside down, you only ever build the top half, then check each one against its own rotation through the middle row.
 
-If you'd like the full version, with the exact state and the argument for why merging is safe, it's all written up in the [methods doc](https://github.com/travisboettcher/crossword-puzzle-shape-counter/blob/main/docs/METHODS.md) in the (now public!) [repository](https://github.com/travisboettcher/crossword-puzzle-shape-counter).
+If you'd like the full version, with the exact state and the argument for why merging is safe, it's all written up in the [methods doc](https://github.com/travisboettcher/crossword-puzzle-shape-counter/blob/main/docs/METHODS.md) in the [repository](https://github.com/travisboettcher/crossword-puzzle-shape-counter).
 
 ### How I know it's right
 
@@ -100,11 +98,9 @@ A big number nobody can check isn't worth much, so here's why I believe this one
 - the same code reproduces the American counts from the OEIS, a completely different set of rules; and finally,
 - the 15×15 run was done twice, with different memory settings so the partial counts were combined in a different order, and with a build that stops on any arithmetic overflow. Both runs agreed on the total and on all 1,024 partial sums along the way.
 
-I also sent the result to Keith before posting it here, since it's his question.
-
 ### What's next
 
-The idea above is a good one, but the first time I pointed it at 13×13 it ran out of memory and fell over. [Part 2](/posts/making-it-fit-then-making-it-fast/) is about getting it to fit, then getting it fast, including a pile of my own ideas that went nowhere. [Part 3](/posts/an-eleven-hour-run-on-a-rented-server/) is the run itself: 16.6 billion stored states, 262 GB on disk, and eleven hours on a rented server.
+The idea above is a good one, but the first time I pointed it at 13×13 it ran out of memory and fell over. Part 2 is about getting it to fit, then getting it fast, including a pile of my own ideas that went nowhere. Part 3 is the run itself: 16.6 billion stored states, 262 GB on disk, and eleven hours on a rented server.
 
 Not bad for a voice memo :)
 

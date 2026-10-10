@@ -17,6 +17,10 @@ SAME_A, SAME_B, SAME_CENTER = "#....../.#.#.#./.......", "......./.#.#.#./......
 # SAME_A + SAME_CENTER leaves a 2-letter down word in column 0 (and its mirror in column 6)
 SAME_A_BROKEN = "#....../x#.#.#./x....../##.#.##/......x/.#.#.#x/......#"
 
+# Post 2: two column summaries the DP merges. "cucc" (3+ letters, ends checked, 2 more checked
+# than unchecked) and "cc" (2 letters, same) accept exactly the same continuations.
+MERGED_A, MERGED_B = "cucc", "cc"
+
 
 def grid(s):
     return [[ch != "#" for ch in r] for r in s.split("/")]
@@ -47,3 +51,10 @@ if __name__ == "__main__":
     assert full(SAME_A, SAME_CENTER) == SAME_A_BROKEN.replace("x", ".")
     print("same rows, B valid:", show(grid(full(SAME_B, SAME_CENTER))))
     print("same rows, A broken:", SAME_A_BROKEN)
+    from itertools import product
+    from grids import word_ok
+    ok = lambda w: len(w) >= 3 and word_ok([ch == "c" for ch in w])
+    for k in range(7):
+        for tail in map("".join, product("cu", repeat=k)):
+            assert ok(MERGED_A + tail) == ok(MERGED_B + tail), tail
+    print("merged summaries agree on every continuation up to 6 letters")

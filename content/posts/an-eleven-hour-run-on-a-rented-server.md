@@ -24,7 +24,7 @@ For time, I built a **rehearsal** mode. It runs the full 15×15 job on a random 
 
 - "weeks" (my gut);
 - 700-1,700 CPU-hours (the first rehearsal, on that 4-core machine);
-- 230-370 CPU-hours, or 11-18 hours on a 32-thread server (once we noticed part of that rehearsal had run on a single thread); and finally,
+- 230-370 CPU-hours, or 11-18 hours on a 32-thread server (once it turned out part of that rehearsal had run on a single thread); and finally,
 - 10-20 hours, most likely about 14 (after the bug below was fixed).
 
 It took 11 hours and 17 minutes.
@@ -43,7 +43,7 @@ The cause was the fix for the out-of-memory bug. Shrinking each batch to a singl
 
 {{< xchart "smoke13" >}}
 
-I'd like to say I spotted that, but the honest version is that the scaling test spotted it, and it only exists because we planned to check scaling before committing to the big run. (I also tore down that first server while the fix was in progress, so I got to set the whole thing up twice!)
+I'd like to say I spotted that, but the honest version is that the scaling test spotted it, and that test was only there because checking scaling was part of the plan before committing to the big run. (I also tore down that first server while the fix was in progress, so I got to set the whole thing up twice!)
 
 ### The run
 
@@ -67,7 +67,7 @@ One run of a brand-new program isn't proof of anything, so I ran the whole thing
 
 It matched exactly: the same total, the same 1,024 partial sums, and the same number of states at every row.
 
-It also took almost 25 hours instead of 11, and that one's on us. Halving the memory budget meant about four times as much merging on disk, and row 5 alone took 19 hours. (At one point I was worried it had stalled. It hadn't.) The run script now changes the batch size for the verify run instead of the budget.
+It also took almost 25 hours instead of 11, which was avoidable. Halving the memory budget meant about four times as much merging on disk, and row 5 alone took 19 hours. (At one point I was worried it had stalled. It hadn't.) The run script now changes the batch size for the verify run instead of the budget.
 
 ### Building it with Claude
 

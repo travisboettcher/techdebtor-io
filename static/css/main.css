@@ -572,3 +572,40 @@ time {
   margin-left: auto;
   margin-right: auto;
 }
+
+/* Explanatory diagrams (scripts/crossword-figures/diagrams.py) */
+.xd .xd-count { fill: var(--muted); opacity: 0.45; }
+.xd .xd-label { fill: var(--xw-unchecked); stroke: var(--chart-mark); stroke-width: 1; }
+.xd .xd-unused { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 2; }
+.xd .xd-black { fill: var(--xw-ink); }
+.xd .xd-white { fill: var(--xw-paper); stroke: var(--xw-ink); stroke-width: 1; }
+.xd .xd-unch { fill: var(--xw-unchecked); stroke: var(--xw-ink); stroke-width: 1; }
+.xd .xd-dot { fill: var(--xw-dot); }
+.xd text.xd-mono {
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", monospace;
+  fill: var(--fg);
+  white-space: pre;
+}
+.xd figcaption { text-align: center; }
+
+/* Markdown tables in posts */
+.post-content table {
+  border-collapse: collapse;
+  margin: 1.5rem auto;
+  font-size: 0.95rem;
+}
+
+.post-content th,
+.post-content td {
+  padding: 0.4rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.post-content th {
+  font-family: "Archivo", sans-serif;
+}
+
+.xw-group-row.xw-align-end {
+  align-items: flex-end;
+}

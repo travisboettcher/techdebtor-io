@@ -1,0 +1,24 @@
+<figure class="xc">
+<div class="xc-title">15×15: states stored after each row</div>
+<svg viewBox="0 0 500 300" role="img" aria-label="15×15: states stored after each row">
+<line class="xc-grid" x1="112" x2="476" y1="260.0" y2="260.0"/><text x="104" y="264.0" text-anchor="end">1,000</text>
+<line class="xc-grid" x1="112" x2="476" y1="173.0" y2="173.0"/><text x="104" y="177.0" text-anchor="end">1 million</text>
+<line class="xc-grid" x1="112" x2="476" y1="86.0" y2="86.0"/><text x="104" y="90.0" text-anchor="end">1 billion</text>
+<line class="xc-axis" x1="112" x2="476" y1="260" y2="260"/>
+<polyline class="xc-line" points="142.3,238.6 203.0,174.8 263.7,136.8 324.3,98.0 385.0,67.1 445.7,50.6"/>
+<g class="xc-hover"><title>row 0: 5,451 states (0.1 MB on disk)</title><rect class="xc-hit" x="112.0" y="28" width="60.7" height="232"/><circle class="xc-mark xc-ring" cx="142.3" cy="238.6" r="5"/><text class="xc-value" x="142.3" y="226.6" text-anchor="middle">5,451</text></g>
+<text x="142.3" y="282" text-anchor="middle">row 0</text>
+<g class="xc-hover"><title>row 1: 864,641 states (13 MB on disk)</title><rect class="xc-hit" x="172.7" y="28" width="60.7" height="232"/><circle class="xc-mark xc-ring" cx="203.0" cy="174.8" r="5"/><text class="xc-value" x="203.0" y="162.8" text-anchor="middle">865K</text></g>
+<text x="203.0" y="282" text-anchor="middle">row 1</text>
+<g class="xc-hover"><title>row 2: 17,782,460 states (267 MB on disk)</title><rect class="xc-hit" x="233.3" y="28" width="60.7" height="232"/><circle class="xc-mark xc-ring" cx="263.7" cy="136.8" r="5"/><text class="xc-value" x="263.7" y="124.8" text-anchor="middle">17.8M</text></g>
+<text x="263.7" y="282" text-anchor="middle">row 2</text>
+<g class="xc-hover"><title>row 3: 386,108,733 states (5.8 GB on disk)</title><rect class="xc-hit" x="294.0" y="28" width="60.7" height="232"/><circle class="xc-mark xc-ring" cx="324.3" cy="98.0" r="5"/><text class="xc-value" x="324.3" y="86.0" text-anchor="middle">386M</text></g>
+<text x="324.3" y="282" text-anchor="middle">row 3</text>
+<g class="xc-hover"><title>row 4: 4,485,359,212 states (68 GB on disk)</title><rect class="xc-hit" x="354.7" y="28" width="60.7" height="232"/><circle class="xc-mark xc-ring" cx="385.0" cy="67.1" r="5"/><text class="xc-value" x="385.0" y="55.1" text-anchor="middle">4.49B</text></g>
+<text x="385.0" y="282" text-anchor="middle">row 4</text>
+<g class="xc-hover"><title>row 5: 16,610,709,547 states (262 GB on disk)</title><rect class="xc-hit" x="415.3" y="28" width="60.7" height="232"/><circle class="xc-mark xc-ring" cx="445.7" cy="50.6" r="5"/><text class="xc-value" x="451.7" y="38.6" text-anchor="end">16.6B</text></g>
+<text x="445.7" y="282" text-anchor="middle">row 5</text>
+</svg>
+<figcaption>Log scale. Row 6 (the last row of the top half) is glued to its mirror image as it's generated, so it's never stored.</figcaption>
+<details><summary>Show the numbers</summary><table><thead><tr><th>Row</th><th>States</th></tr></thead><tbody><tr><td>row 0</td><td>5,451 states (0.1 MB on disk)</td></tr><tr><td>row 1</td><td>864,641 states (13 MB on disk)</td></tr><tr><td>row 2</td><td>17,782,460 states (267 MB on disk)</td></tr><tr><td>row 3</td><td>386,108,733 states (5.8 GB on disk)</td></tr><tr><td>row 4</td><td>4,485,359,212 states (68 GB on disk)</td></tr><tr><td>row 5</td><td>16,610,709,547 states (262 GB on disk)</td></tr></tbody></table></details>
+</figure>

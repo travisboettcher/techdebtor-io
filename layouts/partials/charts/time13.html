@@ -1,0 +1,18 @@
+<figure class="xc">
+<div class="xc-title">Time to count every 13×13 British grid (4-core machine)</div>
+<svg viewBox="0 0 500 216" role="img" aria-label="Time to count every 13×13 British grid (4-core machine)">
+<line class="xc-grid" x1="165.0" x2="165.0" y1="8" y2="188"/><text x="165.0" y="206" text-anchor="middle">0</text>
+<line class="xc-grid" x1="224.8" x2="224.8" y1="8" y2="188"/><text x="224.8" y="206" text-anchor="middle">30 min</text>
+<line class="xc-grid" x1="284.5" x2="284.5" y1="8" y2="188"/><text x="284.5" y="206" text-anchor="middle">1 h</text>
+<line class="xc-grid" x1="344.2" x2="344.2" y1="8" y2="188"/><text x="344.2" y="206" text-anchor="middle">1.5 h</text>
+<line class="xc-grid" x1="404.0" x2="404.0" y1="8" y2="188"/><text x="404.0" y="206" text-anchor="middle">2 h</text>
+<line class="xc-axis" x1="165" x2="165" y1="8" y2="188"/>
+<g class="xc-hover"><title>First attempt: ran out of memory at row 3 (49 million states)</title><rect class="xc-hit" x="0" y="8" width="500" height="36"/><text x="155" y="30.0" text-anchor="end">First attempt</text><text class="xc-value" x="175" y="30.0">ran out of memory</text></g>
+<g class="xc-hover"><title>Last row in passes: about 2 hours, 12 GB</title><rect class="xc-hit" x="0" y="44" width="500" height="36"/><text x="155" y="66.0" text-anchor="end">Last row in passes</text><path class="xc-mark" d="M165,52.0 H400.0 Q404.0,52.0 404.0,56.0 V68.0 Q404.0,72.0 400.0,72.0 H165 Z"/><text class="xc-value" x="412.0" y="66.0">~2 h</text></g>
+<g class="xc-hover"><title>Fused last row: 26 minutes, 7 GB</title><rect class="xc-hit" x="0" y="80" width="500" height="36"/><text x="155" y="102.0" text-anchor="end">Fused last row</text><path class="xc-mark" d="M165,88.0 H212.8 Q216.8,88.0 216.8,92.0 V104.0 Q216.8,108.0 212.8,108.0 H165 Z"/><text class="xc-value" x="224.8" y="102.0">26 min</text></g>
+<g class="xc-hover"><title>Branch-free center filter: 18 minutes</title><rect class="xc-hit" x="0" y="116" width="500" height="36"/><text x="155" y="138.0" text-anchor="end">Branch-free filter</text><path class="xc-mark" d="M165,124.0 H196.8 Q200.8,124.0 200.8,128.0 V140.0 Q200.8,144.0 196.8,144.0 H165 Z"/><text class="xc-value" x="208.8" y="138.0">18 min</text></g>
+<g class="xc-hover"><title>Merged column summaries: 12.5 minutes, 7.3 GB</title><rect class="xc-hit" x="0" y="152" width="500" height="36"/><text x="155" y="174.0" text-anchor="end">Merged summaries</text><path class="xc-mark" d="M165,160.0 H185.9 Q189.9,160.0 189.9,164.0 V176.0 Q189.9,180.0 185.9,180.0 H165 Z"/><text class="xc-value" x="197.9" y="174.0">12.5 min</text></g>
+</svg>
+
+<details><summary>Show the numbers</summary><table><thead><tr><th>Version</th><th>Time</th></tr></thead><tbody><tr><td>First attempt</td><td>ran out of memory at row 3 (49 million states)</td></tr><tr><td>Last row in passes</td><td>about 2 hours, 12 GB</td></tr><tr><td>Fused last row</td><td>26 minutes, 7 GB</td></tr><tr><td>Branch-free filter</td><td>18 minutes</td></tr><tr><td>Merged summaries</td><td>12.5 minutes, 7.3 GB</td></tr></tbody></table></details>
+</figure>

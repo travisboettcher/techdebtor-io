@@ -1,8 +1,9 @@
 ---
 title: "31,000 Lines I Didn't Type"
-date: 2026-10-08
-draft: true
+date: 2026-10-11
+draft: false
 tags: ["Home Lab", "Rust"]
+hero_image: "https://images.unsplash.com/photo-1655824467930-74d790990b4e?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 That's five posts, so here's where it all landed. `hll` started in the middle of August, and by the end of the month there was a working compiler, 58 tagged releases, and a repository I had directed rather than written - which is a strange thing to say about your own side project! Here's why it worked, and then what it cost.

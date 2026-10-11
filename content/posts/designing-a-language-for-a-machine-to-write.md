@@ -85,7 +85,7 @@ My own compiler talked me out of a caught error and into an uncaught one. I'm od
 
 ### Two more to go
 
-The next one is the strangest thing that happened to this project: I spent a month taking a feature back out, and found out what my compiler had been missing the whole time. Then the last post, where I have to account for myself. If you want the grammar before either, it's all in [docs/DESIGN.md](https://github.com/travisboettcher/hl-lang/blob/main/docs/DESIGN.md).
+The next one is the strangest thing that happened to this project: I spent three weeks taking a feature back out, and found out what my compiler had been missing the whole time. Then the last post, where I have to account for myself. If you want the grammar before either, it's all in [docs/DESIGN.md](https://github.com/travisboettcher/hl-lang/blob/main/docs/DESIGN.md).
 
 ---
 

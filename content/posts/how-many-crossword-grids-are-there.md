@@ -1,8 +1,9 @@
 ---
 title: "How Many Crossword Grids Are There?"
 date: 2026-10-18
-draft: true
+draft: false
 tags: ["Rust", "Math", "Crosswords"]
+hero_image: "https://images.unsplash.com/photo-1769162019553-448f1bb484df?w=800&h=400&fit=crop&auto=format&q=80"
 summary: "A voice memo, an open question from a 2026 paper, and the idea that turned 'list every grid' into 'count them without looking': there are 2,393,670,267,515,481 valid 15×15 British-style crossword grids."
 ---
 

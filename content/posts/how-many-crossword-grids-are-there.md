@@ -101,7 +101,7 @@ A big number nobody can check isn't worth much, so here's why I believe this one
 
 ### What's next
 
-The idea above is a good one, but the first time I pointed it at 13×13 it ran out of memory and fell over. Part 2 is about getting it to fit, then getting it fast, including a pile of my own ideas that went nowhere. Part 3 is the run itself: 16.6 billion stored states, 262 GB on disk, and eleven hours on a rented server.
+The idea above is a good one, but the first time I pointed it at 13×13 it ran out of memory and fell over. [Part 2](/posts/making-it-fit-then-making-it-fast/) is about getting it to fit, then getting it fast, including a pile of my own ideas that went nowhere. Part 3 is the run itself: 16.6 billion stored states, 262 GB on disk, and eleven hours on a rented server.
 
 Not bad for a voice memo :)
 

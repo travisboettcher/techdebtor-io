@@ -1,8 +1,9 @@
 ---
 title: "Making It Fit, Then Making It Fast"
-date: 2026-10-25
-draft: true
+date: 2026-10-27
+draft: false
 tags: ["Rust", "Math", "Crosswords"]
+hero_image: "https://images.unsplash.com/photo-1779967413483-075d01513bad?w=800&h=400&fit=crop&auto=format&q=80"
 summary: "The first 13×13 run ran out of memory. Getting from there to 12.5 minutes took a smaller state, a lookup table, and a long list of my own ideas that didn't pan out."
 ---
 

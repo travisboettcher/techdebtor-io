@@ -1,8 +1,9 @@
 ---
 title: "An Eleven-Hour Run on a Rented Server"
 date: 2026-11-01
-draft: true
+draft: false
 tags: ["Rust", "Math", "Crosswords"]
+hero_image: "https://images.unsplash.com/photo-1603793510575-a8cf24361baa?w=800&h=400&fit=crop&auto=format&q=80"
 summary: "Sizing a job from a 1/1024 sample, finding 30 idle threads, and running 16.6 billion states through 262 GB of disk to count every 15×15 British crossword grid. Twice."
 ---
 

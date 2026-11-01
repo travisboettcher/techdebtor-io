@@ -107,14 +107,14 @@ What went wrong is that the first column of A has a down word that started in ro
 Some ideas were good enough to build, measure and throw away:
 
 - **Building cell by cell instead of row by row.** This is the textbook refinement, and it produced identical states, but it was **6.6 times slower**. The row filter already avoids building dead rows, which is the waste cell-by-cell is meant to cut.
-- **Sorting instead of hashing** to merge states: 6% slower and 14% more memory. (It came back later as the format for writing states to disk, which is Part 3's problem.)
+- **Sorting instead of hashing** to merge states: 6% slower and 14% more memory. (It came back later as the format for writing states to disk, which is [Part 3](/posts/an-eleven-hour-run-on-a-rented-server/)'s problem.)
 - **A cache for the last row.** The first version had a hit rate of 0.02%, which turned out to be a bug: it picked cache slots using the *low* bits of a hash whose good bits are at the top. Fixed, the hit rate went up to 32-47%, and the last row got *slower* anyway (3.4 seconds to 4.8-5.3 at 11×11). By then, gluing a state directly was cheaper than looking it up.
 
 Every one of these went into the project log with its numbers, so I never had to wonder twice. When code is this cheap to write, ideas are cheap to try, and the bottleneck becomes remembering what you already ruled out!
 
 ### Where that left things
 
-By the end of this stretch, 11×11 went from 73 seconds to about 3, and 13×13 went from crashing to 12.5 minutes in 7.3 GB. But 15×15 was a different animal. Row 3 alone has 386 million states, and the measurements said rows 4 and 5 would run to billions, far more than any machine I have would hold in memory. So the next step was to put the rows on disk and rent a big server, which is Part 3 :)
+By the end of this stretch, 11×11 went from 73 seconds to about 3, and 13×13 went from crashing to 12.5 minutes in 7.3 GB. But 15×15 was a different animal. Row 3 alone has 386 million states, and the measurements said rows 4 and 5 would run to billions, far more than any machine I have would hold in memory. So the next step was to put the rows on disk and rent a big server, which is [Part 3](/posts/an-eleven-hour-run-on-a-rented-server/) :)
 
 ---
 

@@ -80,7 +80,7 @@ It also got things wrong, and I think that's worth saying out loud:
 - the cache with the 0.02% hit rate from Part 2; and finally,
 - a first draft of the methods doc that claimed more testing than had actually been done (Claude caught that one itself while checking it, and fixed it).
 
-None of those reached the answer, and that's not luck. Every fast path is checked against a slow, obviously correct version; every size up to 13×13 has to match Keith's published counts; and the 15×15 number had to come out the same twice, by two different routes. The tests are what let me trust code I didn't write line by line, and that's the same conclusion I came to with [my last project](/posts/33000-lines-i-didnt-type/).
+None of those reached the answer, and that's not luck. Every fast path is checked against a slow, obviously correct version; every size up to 13×13 has to match Keith's published counts; and the 15×15 number had to come out the same twice, by two different routes. The tests are what let me trust code I didn't write line by line, and that's the same conclusion I came to with [my last project](/posts/31000-lines-i-didnt-type/).
 
 ### That's the series
 

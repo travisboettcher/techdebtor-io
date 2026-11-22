@@ -1,0 +1,21 @@
+# "So the question became ..." "So the plugin says ..." "So who checks the checkers?" A
+# sentence-initial "So" with no comma, used as a drum roll before a conclusion. This blog's own
+# "So, ..." and "So - ..." (with a pause) pass, as do "So I ..." and "So that's ...".
+extends: existence
+message: "'%s': a drum-roll 'So'. Drop it and start with the subject."
+level: warning
+scope: sentence
+nonword: true
+tokens:
+  - '^So (?:the|a|an|it|who|what|on|in)\b'
+
+tests:
+  - name: fires on the drafts
+    input: |
+      So the question became how to make that loop part of the graph.
+    want: |
+      1:1:Repo.AITellsDramaticSo:'So the': a drum-roll 'So'. Drop it and start with the subject.
+  - name: passes the blog's own voice
+    input: |
+      So, after 7 years I graduated. So I called it good enough. So - you've set up a new service.
+    want: ""

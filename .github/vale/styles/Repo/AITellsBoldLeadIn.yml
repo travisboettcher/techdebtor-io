@@ -1,0 +1,22 @@
+# A paragraph or list item that opens with a bolded sentence: "**Run records.** Every run ...",
+# "**The sneaky push.** In PR 16 ...", "- **note:** seen once.". The model's slide-deck habit; this
+# blog's own lists bold a label and put the colon after it ("- **Local DNS zones**: ...") and pass.
+# Write a heading, or a sentence that says it.
+extends: existence
+message: "Bold lead-in: '%s'. Use a heading, or open the paragraph with a plain sentence."
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^(?:[-*+] |\d+\. )?\*\*[^*\n]{1,60}[.?!:]\*\*'
+
+tests:
+  - name: fires on the drafts
+    input: |
+      **Run records.** Every run writes a record.
+    want: |
+      1:1:Repo.AITellsBoldLeadIn:Bold lead-in: '**Run records.**'. Use a heading, or open the paragraph with a plain sentence.
+  - name: passes the blog's own voice
+    input: |
+      - **Local DNS zones**: a primary zone for the domain.
+    want: ""

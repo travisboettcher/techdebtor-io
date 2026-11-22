@@ -1,0 +1,20 @@
+# "an override that quietly empties the safeguards", "its findings silently vanished". A model's
+# favourite way to make a default sound sinister. Say what happens and when.
+extends: existence
+message: "'%s' dramatises. Say what happens and what you'd see (or not see) when it does."
+level: warning
+ignorecase: true
+tokens:
+  - quietly
+  - silently
+
+tests:
+  - name: fires on the drafts
+    input: |
+      Without the flag, git quietly sets that branch to track main.
+    want: |
+      1:23:Repo.AITellsQuietly:'quietly' dramatises. Say what happens and what you'd see (or not see) when it does.
+  - name: passes the blog's own voice
+    input: |
+      Without the flag, git sets that branch to track main.
+    want: ""

@@ -5,3 +5,14 @@ extends: Std.Readability.SentenceLength
 message: "Sentence runs to %d words; split it."
 level: warning
 max: 60
+
+tests:
+  - name: fires past 60 words
+    input: |
+      word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word.
+    want: |
+      1:1:Repo.SentenceLength:Sentence runs to 61 words; split it.
+  - name: passes 60 words
+    input: |
+      word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word.
+    want: ""

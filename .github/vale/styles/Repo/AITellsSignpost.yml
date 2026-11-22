@@ -1,0 +1,21 @@
+# "Here's the honest version." "Here are the ones I keep thinking about." A sentence that announces
+# the next one instead of saying anything. Sentence-initial only, and only before the words that
+# make it a signpost, so "Here is my latest render" (a caption) passes.
+extends: existence
+message: "Signpost: '%s'. Cut the announcement and start with the thing itself."
+level: warning
+scope: sentence
+nonword: true
+tokens:
+  - '^Here(?:[''’]s| is| are) (?:the(?! thing\b)|what|how|why|where|who|one)\b'
+
+tests:
+  - name: fires on the drafts
+    input: |
+      Here's the honest version. The model doesn't learn.
+    want: |
+      1:1:Repo.AITellsSignpost:Signpost: 'Here's the'. Cut the announcement and start with the thing itself.
+  - name: passes the blog's own voice
+    input: |
+      Here is my latest creation, made with the tutorial.
+    want: ""

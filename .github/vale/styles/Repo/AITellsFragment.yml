@@ -1,0 +1,21 @@
+# Clipped full-stop sentences for effect: "Fixed." "Fair." "No code yet." "Record runs." "That
+# graph worked." Three words or fewer, ending in a full stop (this blog's short sentences end in
+# "!" and stay).
+extends: existence
+message: "Fragment for effect ('%s'). Fold it into a neighbouring sentence."
+level: warning
+scope: sentence
+nonword: true
+tokens:
+  - '^[A-Z][\w''’]*(?: [\w''’]+){0,2}\.$'
+
+tests:
+  - name: fires on the drafts
+    input: |
+      The reviewer found a leak. Fixed. On the next pass it found another.
+    want: |
+      1:28:Repo.AITellsFragment:Fragment for effect ('Fixed.'). Fold it into a neighbouring sentence.
+  - name: passes the blog's own voice
+    input: |
+      It was the worst! I took one class and knew I had found what I wanted to do.
+    want: ""

@@ -1,0 +1,21 @@
+# "That's the whole loop in miniature." "That's exactly the signal the retro looks for." A sentence
+# that points back at the last one to label it. Sentence-initial "That's" followed by the words that
+# make it a label; "That's 26 frames per second!" and "That's when I found ..." pass.
+extends: existence
+message: "'%s' labels the sentence before it. Put the point in that sentence, or cut this one."
+level: warning
+scope: sentence
+nonword: true
+tokens:
+  - '^That(?:[''’]s| is) (?:the|what|where|why|how|exactly|a|an|part|it)\b'
+
+tests:
+  - name: fires on the drafts
+    input: |
+      Heavy jobs run one at a time. That's the whole loop in miniature.
+    want: |
+      1:31:Repo.AITellsThatsThe:'That's the' labels the sentence before it. Put the point in that sentence, or cut this one.
+  - name: passes the blog's own voice
+    input: |
+      That's 26 frames per second! That's when I found his blog.
+    want: ""

@@ -6,12 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Hugo source for [techdebtor.io](https://techdebtor.io) — *The Tech Debtor* blog. A
 hand-rolled minimal theme (no third-party Hugo theme dependency) built to match the
-visual identity of the original Ghost site it's migrating from. See README.md for
-current migration status and roadmap.
+visual identity of the Ghost site it replaced.
 
-This site does not yet serve real traffic — techdebtor.io is currently powered by a
-self-hosted Ghost instance (in the separate `homelab-infrastructure` repo). CI here
-only builds and uploads an artifact for inspection; there is no deploy step yet.
+This site serves techdebtor.io. The serving half lives in the separate
+`homelab-infrastructure` repo: nginx serves the built site from a volume, and a
+small deploy receiver swaps in new builds. n8n polls this repo's GitHub Actions
+for the latest successful build artifact and hands it to that receiver, so a green
+CI build is what goes live; there is no deploy step or webhook in this repo. Drafts
+(`draft: true`) are left out of that build.
 
 ## Commands
 
@@ -28,8 +30,51 @@ with a `can't evaluate field Locale` error; this is a Hugo-version mismatch, not
 bug in the templates — install the pinned extended version instead of patching
 templates around it.
 
-There is no test suite or linter; `hugo --minify --gc` succeeding is the correctness
-check, along with visually reviewing `hugo server -D` output.
+There is no site test suite; `hugo --minify --gc` succeeding is the correctness
+check, along with visually reviewing `hugo server -D` output. Prose is linted with
+Vale (next section).
+
+## Prose linting
+
+`.github/workflows/prose.yml` runs [Vale](https://vale.sh) 3.28.1 over every tracked
+Markdown file. `.vale.ini` picks the rules by path: posts, pages and READMEs get Vale
+core, the core of Voices and proselint, tuned for this blog's casual first-person voice
+(exclamations, contractions, asides and opening "But"s are fine); `CLAUDE.md` gets the
+model-facing rules (Prompts, Voices, `Repo.SentenceLength`). Only errors fail CI, and
+the only error on posts is a repeated word. On a pull request, added or changed
+Markdown files are also annotated with their warnings; the rest of the site is checked
+for errors only. Never reword an old post to satisfy a style warning: the archive is
+history. Fix real typos only.
+
+### Running and tuning it
+
+Run it locally with the same Vale, from its
+[3.28.1 release](https://github.com/vale-cli/vale/releases/tag/v3.28.1): check the
+archive against `vale_3.28.1_checksums.txt` and unpack it outside the repository.
+Then, from the repository root (paths must be relative: the rules are chosen by path):
+
+```bash
+python3 .github/scripts/vale_packages.py      # installs the pinned packages; a no-op when current
+vale content/posts/my-new-post.md             # one post: errors, warnings and suggestions
+git ls-files -z '*.md' | xargs -0 vale --minAlertLevel=error   # the whole site, as CI checks it
+python -m pytest -q .github/scripts/tests     # the scripts' tests (pytest 9.2.0)
+```
+
+- **Add vocabulary.** When `Vale.Spelling` flags a correct word (a place, a person,
+  a tool), add it to `.github/vale/styles/config/vocabularies/Repo/accept.txt`, one
+  regular expression per line, in alphabetical order: `[Hh]ealthchecks?` accepts the
+  capitalised and plural forms. A case-sensitive entry such as `Traefik` also makes
+  `Vale.Terms` warn about other casings; use `(?i)` where any casing is right.
+- **Turn a rule off** with `Package.Rule = NO` (or change its level with
+  `= suggestion`) in the matching section of `.vale.ini`, with a one-line comment
+  saying why. For one passage, wrap it in `<!-- vale Package.Rule = NO -->` and
+  `<!-- vale Package.Rule = YES -->`, each on its own line with blank lines around it.
+- **The packages** (Voices, proselint, Prompts, Std) are pinned in
+  `.github/vale/packages.json` to versioned release zips and their sha256, and
+  installed into `.github/vale/styles/`, which is gitignored except `Repo/` and the
+  vocabulary. Never run `vale sync` or edit a package's files. Every proselint rule
+  ships as an error, so `.vale.ini` sets a level for each one: when an upgrade adds a
+  rule, give it a level there too, and run Vale over the site before and after.
 
 ## Architecture
 

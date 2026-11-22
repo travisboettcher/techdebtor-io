@@ -35,7 +35,7 @@ than real embeds/photos.
 hugo server -D
 ```
 
-Visit http://localhost:1313. `-D` includes draft posts.
+Visit <http://localhost:1313>. `-D` includes draft posts.
 
 ## Adding a post
 
@@ -57,3 +57,9 @@ Fill in `title`, `tags`, and `summary` in the frontmatter, then flip
 installs the pinned Hugo version, runs `hugo --minify --gc`, and uploads the
 built `public/` directory as a workflow artifact. This is a build-check
 only — it does not deploy anywhere yet.
+
+`.github/workflows/prose.yml` lints the Markdown with [Vale](https://vale.sh),
+tuned for the blog's casual voice: a repeated word fails the build, and a pull
+request's new or changed posts get their warnings (misspellings, inflated words)
+as annotations. See "Prose linting" in `CLAUDE.md` for running it locally,
+adding vocabulary and turning a rule off.

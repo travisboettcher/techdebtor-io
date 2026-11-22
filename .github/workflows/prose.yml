@@ -1,0 +1,91 @@
+name: Prose
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  scripts:
+    name: prose scripts tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.15"
+      - run: python -m pip install pytest==9.2.0
+      - run: python -m pytest -q -p no:cacheprovider .github/scripts/tests
+
+  vale:
+    name: prose (Vale)
+    runs-on: ubuntu-latest
+    env:
+      VALE_VERSION: "3.28.1"
+      # sha256 of vale_3.28.1_Linux_64-bit.tar.gz, from the release's vale_3.28.1_checksums.txt.
+      VALE_SHA256: "068954ad869ebec24b8dec6ebcd1cbb1fd5f5a83e966a35baedfae8b2cdc093a"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          # A pull request checks out its merge commit; depth 2 brings its first parent (the base
+          # branch) for the list of changed files.
+          fetch-depth: 2
+      - name: Install Vale
+        run: |
+          set -euo pipefail
+          dir="$RUNNER_TEMP/vale"
+          mkdir -p "$dir"
+          curl -fsSL --retry 3 -o "$dir/vale.tar.gz" \
+            "https://github.com/vale-cli/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Linux_64-bit.tar.gz"
+          echo "${VALE_SHA256}  $dir/vale.tar.gz" | sha256sum -c -
+          tar -xzf "$dir/vale.tar.gz" -C "$dir" vale
+          echo "$dir" >> "$GITHUB_PATH"
+      - name: Install the Vale packages
+        # Voices, proselint, Prompts and Std: each a versioned release zip, checked against the sha256
+        # pinned in .github/vale/packages.json before it is unpacked into the StylesPath.
+        run: python3 .github/scripts/vale_packages.py
+      - name: Run Vale
+        # Two levels, one report. Markdown files a pull request adds or changes are linted at warning
+        # level, so a new post's misspellings and inflated words show up as annotations on it; every
+        # other file is linted at error level only, so the archive's old style warnings stay quiet.
+        # Only errors fail the job, wherever they are. On a push to main every file is at error level.
+        # Relative paths from the repository root: .vale.ini's globs pick each file's rules by path.
+        run: |
+          set -uo pipefail
+          vale --version
+          mapfile -d '' files < <(git ls-files -z '*.md')
+          declare -A changed=()
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            mapfile -d '' diff < <(git diff -z --name-only --diff-filter=d HEAD^1 HEAD -- '*.md')
+            for f in "${diff[@]}"; do changed["$f"]=1; done
+          fi
+          new=() old=()
+          for f in "${files[@]}"; do
+            if [ -n "${changed[$f]:-}" ]; then new+=("$f"); else old+=("$f"); fi
+          done
+          echo "Linting ${#new[@]} changed file(s) at warning level, ${#old[@]} at error level."
+          lint() {  # lint <level> <out.json> <files...>
+            local level=$1 out=$2
+            shift 2
+            if [ "$#" -eq 0 ]; then echo '{}' > "$out"; return 0; fi
+            vale --minAlertLevel="$level" --output=JSON --no-exit "$@" > "$out" 2> "$RUNNER_TEMP/vale.err"
+          }
+          status=0
+          lint warning "$RUNNER_TEMP/changed.json" "${new[@]}" || status=$?
+          if [ "$status" -eq 0 ]; then
+            lint error "$RUNNER_TEMP/site.json" "${old[@]}" || status=$?
+          fi
+          if [ "$status" -ne 0 ]; then
+            # Vale itself failed (configuration or runtime error): its error is JSON on stderr.
+            cat "$RUNNER_TEMP/vale.err" >&2
+            python3 .github/scripts/vale_annotations.py "$RUNNER_TEMP/vale.err" || true
+            echo "::error title=Vale::Vale exited $status before linting; see its error above"
+            exit 1
+          fi
+          python3 .github/scripts/vale_annotations.py "$RUNNER_TEMP/changed.json" "$RUNNER_TEMP/site.json"

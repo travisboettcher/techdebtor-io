@@ -20,6 +20,6 @@ Using 80 workers (all on Madison’s cluster), I was able to render 500 frames i
 Future work to be done:
 
   * I need to figure out a way to use the local cluster AND the Madison cluster. I’m not sure if this is a side-effect of Bui’s script or something in my code, but it should be fixed.
-  * Although the tar file is cached so that it isn’t transfered to Madison with each task, currently each task untars the Blender tarball and does some voodoo magic to make it executable. I want to see if there’s a way to eliminate this.
+  * Although the tar file is cached so that it isn’t transferred to Madison with each task, currently each task untars the Blender tarball and does some voodoo magic to make it executable. I want to see if there’s a way to eliminate this.
   * I currently do not check to see if Blender is installed on the machine the task is working on. When we get to a point where the task MAY be working on a machine with Blender installed, we will need to decide if it is worth it to make this check (I don’t know how hard it would be to modify the code to work both ways).
   * Tests! I need to get to work on testing the performance of this program now that flocking is partially working.

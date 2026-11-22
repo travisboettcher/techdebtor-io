@@ -29,7 +29,7 @@ After prepping the veggies, it was time to start cooking! To start with, I threw
 
 [![IMAG0087](/images/archive/futurecyb/experimenting-with-indian-food/IMAG0087-300x169.jpg)](/images/archive/futurecyb/experimenting-with-indian-food/IMAG0087-300x169.jpg)
 
-Next I mixed in 2 tablespoons of tomato paste, 2 teaspoons of paprika, and a teaspoon of garam masala. I cooked this until the tomato paste covered the onions and the spices were fragerant. This is the point were I got really excited 😀
+Next I mixed in 2 tablespoons of tomato paste, 2 teaspoons of paprika, and a teaspoon of garam masala. I cooked this until the tomato paste covered the onions and the spices were fragrant. This is the point were I got really excited 😀
 
 [![IMAG0089](/images/archive/futurecyb/experimenting-with-indian-food/IMAG0089-300x169.jpg)](/images/archive/futurecyb/experimenting-with-indian-food/IMAG0089-300x169.jpg)
 

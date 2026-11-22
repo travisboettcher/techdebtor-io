@@ -61,7 +61,11 @@ AllowedIPs = 10.1.10.5/32
 
 This is the configuration on the VPS. Since it is the one node in the network with a known/discoverable IP address, all peers (clients) will connect to it to join the VPN. The `Interface` section of the config is pretty standard, with the address of the node on the VPN (`10.1.10.1`), the private key, and the port to listen on.
 
+<!-- vale Vale.Repetition = NO -->
+
 The `Peer` sections only need to include the peer's public key and the IP that that peer is going to be using within the VPN. This instructs WireGuard to accept traffic from the peer on that IP, and also to direct outgoing traffic for that IP to the peer.
+
+<!-- vale Vale.Repetition = YES -->
 
 #### Client - WireGuard config
 

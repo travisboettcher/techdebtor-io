@@ -1,0 +1,28 @@
+{
+ "packages": [
+  {
+   "name": "proselint",
+   "version": "v0.4.0",
+   "url": "https://github.com/vale-cli/proselint/releases/download/v0.4.0/proselint.zip",
+   "sha256": "e09f637e4a7beab802c3fb7c9259ec2b2f383fdd4b24b329e3fe50a715a45e67"
+  },
+  {
+   "name": "Prompts",
+   "version": "v0.1.1",
+   "url": "https://github.com/jdkato/prompts/releases/download/v0.1.1/Prompts.zip",
+   "sha256": "e06ee5b57e7f690f93c26a4cc1e644869b9aa078dd3700bd9c944f3545cdf4d7"
+  },
+  {
+   "name": "Std",
+   "version": "v0.2.0",
+   "url": "https://github.com/vale-cli/Std/releases/download/v0.2.0/Std.zip",
+   "sha256": "8cd785a380f35ed0633e41f157efbb241c7585150552b6e101f5aa5b84576d45"
+  },
+  {
+   "name": "Voices",
+   "version": "v0.2.0",
+   "url": "https://github.com/jdkato/voices/releases/download/v0.2.0/Voices.zip",
+   "sha256": "3d03b911727a502c5a6c1e9ea5c040ebe115cde0f6f99176d116fd6893080ba9"
+  }
+ ]
+}

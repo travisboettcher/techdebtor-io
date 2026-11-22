@@ -6,12 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Hugo source for [techdebtor.io](https://techdebtor.io) — *The Tech Debtor* blog. A
 hand-rolled minimal theme (no third-party Hugo theme dependency) built to match the
-visual identity of the original Ghost site it's migrating from. See README.md for
-current migration status and roadmap.
+visual identity of the Ghost site it replaced.
 
-This site does not yet serve real traffic — techdebtor.io is currently powered by a
-self-hosted Ghost instance (in the separate `homelab-infrastructure` repo). CI here
-only builds and uploads an artifact for inspection; there is no deploy step yet.
+This site serves techdebtor.io. The serving half lives in the separate
+`homelab-infrastructure` repo: nginx serves the built site from a volume, and a
+small deploy receiver swaps in new builds. n8n polls this repo's GitHub Actions
+for the latest successful build artifact and hands it to that receiver, so a green
+CI build is what goes live; there is no deploy step or webhook in this repo. Drafts
+(`draft: true`) are left out of that build.
 
 ## Commands
 

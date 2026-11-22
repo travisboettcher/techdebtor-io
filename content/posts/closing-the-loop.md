@@ -48,7 +48,7 @@ Here's the uncomfortable part. After those two run records came 109 more commits
 
 The fix is boring: record runs. `/agent-loop:retro --record` after a big session writes one, and that gives the next retro something to verify the new rules against.
 
-I found a small example while writing this post. `CONTRIBUTING.md` on main says "No status check is required by the ruleset yet". That was true when it was written; now a second ruleset requires nine of them, with no bypass. That's `doc-drift`, a category already in the new ledger, and no record anywhere says it happened.
+I found a small example while writing this post. `CONTRIBUTING.md` on main said "No status check is required by the ruleset yet". That was true when it was written; by then a second ruleset required nine of them, with no bypass. That's `doc-drift`, a category already in the new ledger, and no record anywhere says it happened. (There's [a fix](https://github.com/travisboettcher/techdebtor-plugins/pull/21) now, made by hand, which is rather the point.)
 
 ### The machinery around it
 

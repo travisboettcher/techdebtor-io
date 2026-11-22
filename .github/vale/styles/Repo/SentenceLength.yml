@@ -1,0 +1,7 @@
+# Std.Readability.SentenceLength with this repository's limit: Std's 25 words flags most of the
+# skills' numbered steps, and .vale.ini can set a rule's level but not its max. A sentence past 60
+# words buries its instruction; split it.
+extends: Std.Readability.SentenceLength
+message: "Sentence runs to %d words; split it."
+level: warning
+max: 60

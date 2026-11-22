@@ -90,7 +90,7 @@ networks:
 
 Note that the network is named `traefik-net` here, but references the `default` network from the `traefik` directory (`traefik_default`). The label also needs to reference the actual name and not the alias.
 
-For services that comprise multiple containers, you probably only want to expose one of those through Traefik - but you also need those services to continue to talk to eachother. I won't deep dive into container networking here, but one of the coolest things about these container environments is the ability to isolate and sandbox services. By taking advantage of the standard Docker Compose syntax, you can include the 'exposed' service in both the Traefik network and the network that the dependent services are on:
+For services that comprise multiple containers, you probably only want to expose one of those through Traefik - but you also need those services to continue to talk to each other. I won't deep dive into container networking here, but one of the coolest things about these container environments is the ability to isolate and sandbox services. By taking advantage of the standard Docker Compose syntax, you can include the 'exposed' service in both the Traefik network and the network that the dependent services are on:
 
 ```YAML
 version: '3'

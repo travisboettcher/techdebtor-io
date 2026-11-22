@@ -23,7 +23,7 @@ Well, fear not! With one simple payment of $5, all symptoms of “my chair is un
 
 ## Step 1 – Look for Other Projects
 
-As any good procrastinator will tell you, the first thing to do when starting a new project is to find other projects that you been putting off. In my case, I have been meaning to set up my [Ouya ](https://www.ouya.tv/ "Ouya")to steam Google Play Music so I can listen to music through my TV (instead of my phone or laptop). This seemed like the perfect time to tackle this project – after all, I would be working in the living room and would need music!
+As any good procrastinator will tell you, the first thing to do when starting a new project is to find other projects that you been putting off. In my case, I have been meaning to set up my [Ouya](https://www.ouya.tv/ "Ouya") to steam Google Play Music so I can listen to music through my TV (instead of my phone or laptop). This seemed like the perfect time to tackle this project – after all, I would be working in the living room and would need music!
 
 After doing some research, I discovered you could ‘side-load’ the Google Play store onto the Ouya (the Ouya has it’s own store, which doesn’t include Google Play Music). Although it probably isn’t as hard as it sounds, the number of steps required and the success rate of forum users did not sound promising – remember, I was trying to fix a chair not spend four hours getting music to stream through my TV!
 

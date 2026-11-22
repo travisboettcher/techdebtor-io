@@ -31,7 +31,7 @@ In August my wife and I realized a life dream. We had a Japanese language class 
   * Ueno Zoo
   * National Museum
 
-[![Senso-Ji](/images/archive/futurecyb/japan-trip/j18-1024x768.jpg)](http://futurecyb.org/?attachment_id=229) [![A temple at the Oeno Zoo](/images/archive/futurecyb/japan-trip/J10-1024x768.jpg)](http://futurecyb.org/?attachment_id=230)
+[![Senso-Ji](/images/archive/futurecyb/japan-trip/j18-1024x768.jpg)](http://futurecyb.org/?attachment_id=229) [![A temple at the Ueno Zoo](/images/archive/futurecyb/japan-trip/J10-1024x768.jpg)](http://futurecyb.org/?attachment_id=230)
 
 ### Day 2
 

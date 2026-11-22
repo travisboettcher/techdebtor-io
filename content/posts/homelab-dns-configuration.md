@@ -8,7 +8,7 @@ I've previously discussed [how I route external traffic to my homelab](/posts/wi
 
 ### The Initial Workaround
 
-I solved these issues temporarily by using two different domains: `techdebtor.io` and `techdebtor.local`. However, this posed a a different issue that I still wanted to address: I was forced to either use a self-signed certificate for SSL or not use SSL at all - I opted for `http://techdebtor.local` because in my view, having to install a certificate on each device to be able to trust the service wasn't really worth it. Using an insecure connection resulted in some issues itself - in particular, some clients did not support connecting via http.
+I solved these issues temporarily by using two different domains: `techdebtor.io` and `techdebtor.local`. However, this posed a different issue that I still wanted to address: I was forced to either use a self-signed certificate for SSL or not use SSL at all - I opted for `http://techdebtor.local` because in my view, having to install a certificate on each device to be able to trust the service wasn't really worth it. Using an insecure connection resulted in some issues itself - in particular, some clients did not support connecting via http.
 
 ### The Requirements
 

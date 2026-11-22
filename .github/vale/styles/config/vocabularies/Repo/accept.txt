@@ -18,6 +18,7 @@ Bui
 chilis
 choy
 Coheed
+Cohn(?:'s)?
 Compose's
 contraire
 Crosstrek
@@ -80,9 +81,11 @@ Souza
 [Ss]tirfry
 Taisha
 Tandoor
+techdebtor
 Technitium
 tempfile
 Terragen
+Testcontainers
 Toya
 Traefik
 [Tt]akuhaibin

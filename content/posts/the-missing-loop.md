@@ -6,9 +6,9 @@ tags: ["AI", "Claude Code"]
 summary: "Over a weekend I had Claude build a graph of agents that writes down its own mistakes and turns the ones that keep coming back into rules, then ran it on its own repo."
 ---
 
-This one started with a phrase I'd heard secondhand: that some engineers at Anthropic work with a "self-improving graph of agents." I didn't know what that meant, but it sounded like something I'd want, so I asked Claude. The first thing it did was say it couldn't verify that this was anybody's best practice. What it could do was explain what the idea would have to mean, and that ended up being more useful to me than a citation.
+This one started with a phrase I'd heard secondhand: that some engineers at Anthropic work with a "self-improving graph of agents." I didn't know what that meant, but it sounded like something I'd want, so early one Saturday in November I asked Claude. The first thing it did was say it couldn't verify that this was anybody's best practice. What it could do was explain what the idea would have to mean. An explanation isn't evidence, so the only way to find out whether any of it held up was to build it and see.
 
-By Sunday morning there was a public plugin repo, and the system had run its first retro on itself. Along the way it also audited one of my other projects, which I didn't enjoy reading. This is a long one, and the retro at the end is the part I cared about most.
+By Sunday morning there was a public plugin repo, and the system had run its first retro on itself. Along the way it also audited one of my other projects. This is a long one. The audit was the most interesting part. The retro was the least, because it had little to go on.
 
 ## The missing loop
 
@@ -16,7 +16,7 @@ By Sunday morning there was a public plugin repo, and the system had run its fir
 
 The model doesn't get better between my sessions. If a graph of agents is going to improve itself, the improvement has to live in the things the next run reads before it starts: `CLAUDE.md`, skills, memory, hooks and tests. In other words, the scaffolding learns.
 
-Claude's second point was that an improvement only sticks where something can check it, like a test that fails when the mistake comes back. Without a verifier in the loop, the agents mostly end up agreeing with each other: one makes a mistake, the next reads the result and confirms it, and so on down the graph.
+Claude's second point was that an improvement only sticks where something can check it, like a test that fails when the mistake comes back. I see the two halves of that a little differently. My intuition is that separate agents catch different things, where one agent running everything mostly agrees with itself. A verifier adds something else: it makes the check deterministic. A test fails the same way every time, whichever agent is looking.
 
 That matched what I'd seen building [`hll`](/posts/designing-a-language-for-a-machine-to-write/). A compiler that answered back did more for the agents writing my homelab config than anything I put in a spec.
 
@@ -46,7 +46,7 @@ A separate retro skill reads those records (and my ordinary session transcripts)
 - `hook`: it came back and can be spotted mechanically, so a hook or CI check blocks it.
 - `test`: the mistake is in the code's behaviour, so a test or evaluation fails on it.
 
-Most things should stop at an instruction. Telling the agent is cheap and it usually works.
+Every rule starts as an instruction because telling the agent is cheap. My guess, from experience more than data, is that telling alone often won't be enough, and the rungs above it are there for when it isn't.
 
 Every rule that lands gets an entry in a rules ledger saying which category it targets, which rung it's on, and how often that category showed up before the rule existed. On each retro, every rule in the ledger is checked against one question: did its category stop recurring? Only escapes count against a rule. If a hook blocks the mistake, the hook did its job. If the mistake gets past the rule, the rule is marked `recurring` and the retro proposes the next rung up.
 
@@ -56,7 +56,7 @@ The last piece is the human gate. The retro never edits rules on the default bra
 
 ### Where it all lives
 
-Rules that only make sense in one repo go in that repo's `CLAUDE.md`, skills, hooks and tests, with its ledger committed alongside. My own preferences go in `~/.claude/`, where the mutation-testing note lives. Improvements that would help anyone using the graph only ever become a drafted proposal for me to take upstream. Since nothing project-specific goes in the plugin, I could make it public.
+Rules that only make sense in one repo go in that repo's `CLAUDE.md`, skills, hooks and tests, with its ledger committed alongside. My own preferences go in `~/.claude/`, where the mutation-testing note lives. Improvements that would help anyone using the graph only ever become a drafted proposal for me to take upstream. I'd already decided the plugin would live in a public repo, so keeping anything project-specific out of it was a requirement from the start.
 
 ## Building it with itself
 
@@ -102,7 +102,7 @@ All four went into [PR 2](https://github.com/travisboettcher/techdebtor-plugins/
 
 ### Why the reviewer doesn't see the reasoning
 
-If I could only keep one rule from all of this, I'd keep the reviewer's independence. An implementer who believes a redaction pattern covers `curl -u` will write a test that agrees with it. Show the reviewer that reasoning and it starts reading the code through the same belief, and then two agents are confident about the same gap. Every catch above came from an agent that didn't know what the implementer thought it had done, so it had to look at what the code did. The reviewer is still Claude, with the same blind spots. It just doesn't start out believing what the implementer believes.
+The reviewer never sees how the implementer reasoned, only the diff and the criteria. An implementer who believes a redaction pattern covers `curl -u` will write a test that agrees with it. Show the reviewer that reasoning and it starts reading the code through the same belief, and then two agents are confident about the same gap. Every catch above came from an agent that didn't know what the implementer thought it had done, so it had to look at what the code did. The reviewer is still Claude, with the same blind spots. It just doesn't start out believing what the implementer believes.
 
 ## Who checks the checkers?
 
@@ -126,7 +126,7 @@ It was the human-gate problem again, this time in a config file, and the answer 
 
 ### Report-only until it earns it
 
-The playbook has a rule I agreed with immediately: new checks start opt-in and report-only, and the default run must not get slower. A brand-new mutation tester that blocks every change on day one is how you teach people to ignore it.
+The playbook has a rule that new checks start opt-in and report-only, and that the default run must not get slower. A brand-new mutation tester that blocks every change on day one is how you teach people to ignore it. I'd roll a check out gradually instead: new code is always checked, and existing code doesn't block anything until it has been brought up to the bar.
 
 The expensive specialists (mutation testing, API fuzzing, integration, service and system tests, performance, security scanning) are opt-in, and their findings don't block until the project marks them `blocking`. The independent review found report-only checks that still stopped runs, which got fixed. Heavy specialists also run one at a time, within a budget of 6 runs and 60 minutes (capped at 12 and 120). The PR admits those numbers are guesses. The one-at-a-time part comes from the internet outage.
 
@@ -138,11 +138,11 @@ On a follow-up I asked for one more level, service. It's the project's own packa
 
 A new test strategist checks each criterion's level and reports the pyramid's shape, always report-only, since one change can't fix a whole suite. The review caught the first version blocking on it anyway. It also caught a service tester that could push images, and that tester now builds under a unique local tag and never logs in or pushes.
 
-### The catches that scared me
+### Three catches about pushing
 
-Most of the review catches across the stack were "fair, fixed", but a few made my stomach drop. All of them came from a default doing something slightly different from what you'd assume.
+Most of the review catches across the stack were small. Three were about what could reach GitHub, and two of those came from a default doing something slightly different from what you'd assume.
 
-The lead creates its work branch from `origin/main`. Without `--no-track`, git sets that branch to track main, so a bare `git push` could have gone straight to the default branch. The reviewer marked it major. I'd never have spotted that one myself.
+The lead creates its work branch from `origin/main`. Without `--no-track`, git sets that branch to track main, so a bare `git push` could have gone straight to the default branch. The reviewer marked it major.
 
 PR 16 added the dispatcher, which runs several leads in the background, and only my own words can approve a push. The review found a way round the first version of the push detection: push early under a different branch name, then rebase. Preflight now snapshots `git ls-remote` of every remote, and the gate fails on any new, moved or deleted ref that an approved push doesn't explain. The lead tried that exact dodge by hand to verify it.
 
@@ -174,9 +174,9 @@ The independent reviewer built hostile fixture repos to break it. It found Makef
 
 ### Pointing it at pip-world
 
-The first target was [pip-world](https://github.com/travisboettcher/pip-world), the engine behind Pip, my autonomous-agent experiment. I was fairly sure I wouldn't enjoy the answer, and I didn't. The repo came out at step 0, gated, on a technicality.
+The first target was [pip-world](https://github.com/travisboettcher/pip-world), the engine behind Pip, my autonomous-agent experiment. The repo came out at step 0, gated, on a technicality.
 
-Every item on the gate from 0 to 1 was met except "no secrets in the tree", which came back `unknown` because nothing has ever scanned the repo for secrets. Unknown never counts as met, so step 0 it is. The report pointed out that one secret scan would settle it and put the repo at step 1, which is about the kindest way I've ever been told I'm on the bottom step.
+Every item on the gate from 0 to 1 was met except "no secrets in the tree", which came back `unknown` because nothing has ever scanned the repo for secrets. Unknown never counts as met, so step 0 it is. The report pointed out that one secret scan would settle it and put the repo at step 1.
 
 The bigger problem is the next gate. Among the things the audit measured:
 
@@ -204,7 +204,7 @@ I knew there was no linter. Seeing it written down as a reason my agents can't b
 
 To check that the audit skill itself behaves, `claude plugin eval` runs each case twice, once with the plugin and once without, and grades what the agent did. The fixture is a tiny Python project whose `CLAUDE.md` is a symlink to a fake secret outside the repo.
 
-With the plugin, the report case scored 1.00. Without it, the score was 0.27, and the baseline read the planted secret. Asked to audit a repo, a capable agent with no special instructions opened `CLAUDE.md`, as you'd expect it to. The symlink attack from the hostile fixtures happened in an actual run, and it's the best argument I have for putting this in a plugin.
+With the plugin, the report case scored 1.00. Without it, the score was 0.27, and the baseline read the planted secret. Asked to audit a repo, a capable agent with no special instructions opened `CLAUDE.md`, as you'd expect it to. The symlink attack from the hostile fixtures happened in an actual run.
 
 The same tests caught a real bug in the skill. With `--json`, the output is supposed to end with exactly one JSON block so another tool can parse it. The skill offered to save the report after the JSON block, so the output didn't end with valid JSON. Some of those JSON graders had been dropped during development, until the independent review noticed they'd been failing for a real reason. The save offer now comes first.
 
@@ -214,7 +214,7 @@ None of that showed whether the loop actually closes. On Sunday morning I pointe
 
 ### Not much to read
 
-A retro starts by mining transcripts from past sessions, plus the run records each build leaves behind. It found no transcripts at all, because the sessions that built this repo didn't run on the machine I ran the retro on. That left the two run records from the first day, the original build and the later build-out, with 30 findings between them.
+A retro starts by mining transcripts from past sessions, plus the run records each build leaves behind. It found no transcripts at all. The sessions that built this repo ran on the same machine, but from a different working directory, and the miner looks transcripts up by the project's path, so it never found them. That left the two run records from the first day, the original build and the later build-out, with 30 findings between them.
 
 ### Starting the ledger
 
@@ -228,7 +228,7 @@ The first was `unhandled-input`, with four findings, one of them critical. The r
 
 The second was `contract-gap`, with six findings plus one self-contradiction, all holes in `DESIGN.md` rules that review caught. One was a review gate that trusted a stage list the agent wrote about itself. The new rule says that before you add or change a contract rule, you list the cases that could break it and say what the rule does with each. It ends with a slightly damning line: "Review found a hole of this kind in most contract changes so far."
 
-The retro also left something alone. `unsafe-git-default` is the work branch that tracked `main`, the scariest catch in this whole project. It happened once, and `--no-track` already fixed it, so it stays a note with no rule attached. The ladder is there so that one vivid incident doesn't become a permanent line every future agent has to read, and it held on its first real run.
+The retro also left something alone. `unsafe-git-default` is the work branch that tracked `main`, which the reviewer marked major. It happened once, and `--no-track` already fixed it, so it stays a note with no rule attached. The ladder is there so that one vivid incident doesn't become a permanent line every future agent has to read, and it held on its first real run.
 
 ### Throwing out my own proposals
 
@@ -253,8 +253,6 @@ Vale lints the skills, agents and `CLAUDE.md` as prompts. Claude's first version
 Merging the stack meant getting past my own ruleset. `gh stack merge` can't use the admin bypass, and stacked pull requests can't go through `gh pr merge`, so the stack was unlinked and merged one PR at a time. That left agent-loop at 0.3.0 and agent-ready at 0.1.0, and `claude plugin update` took my own install from 0.1.0 to 0.3.0.
 
 ### What's next
-
-What I liked most about the first retro was where it held back. It left the scariest catch as a note, and it said plainly that it couldn't see most of the work.
 
 The next steps are small. I'll review the retro branch and merge it, or not, and start recording runs. Then I'll run the retro again and find out whether `unhandled-input` and `contract-gap` stopped coming back. That will be the first verdict this ledger hands down, and I genuinely don't know which way it'll go.
 

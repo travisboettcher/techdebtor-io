@@ -242,7 +242,7 @@ The ledger and the two rules are three local commits on a `retro/2026-11-22` bra
 
 After those two run records came 109 more commits: the whole `agent-ready` plugin, the swarm, the dispatcher, most of what this post is about. There's no run record for any of it.
 
-Fixing that is boring. Running `/agent-loop:retro --record` after a big session writes a record, and that gives the next retro something to verify the new rules against.
+Fixing it needs a habit and no new code. Running `/agent-loop:retro --record` after a big session writes a record, and that gives the next retro something to verify the new rules against.
 
 A small example turned up while I was fact-checking this post. `CONTRIBUTING.md` on main says "No status check is required by the ruleset yet". That was true when it was written, but since the stack merged a second ruleset has required nine of them, with no bypass. It's a `doc-drift` finding, a category already in the new ledger, and no record anywhere says it happened. There's [a fix](https://github.com/travisboettcher/techdebtor-plugins/pull/21) open, but it was made outside the graph, so the loop didn't see that either.
 

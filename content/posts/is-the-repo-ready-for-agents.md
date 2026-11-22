@@ -74,3 +74,7 @@ With the plugin, the report case scored 1.00. Without it, 0.27, and **the baseli
 The same tests caught a real bug in the skill. With `--json`, the output is supposed to end with exactly one JSON block, so another tool can parse it. The skill offered to save the report *after* the JSON block, so the output didn't end with valid JSON. Some of those JSON graders had been dropped during development; the independent review noticed they'd been failing for a real reason. They're back, and the save offer now comes first. A full run of agent-ready's cases costs about fifty cents with Sonnet.
 
 So the plugin says the repo is step 0, the tests say the plugin is doing its job, and I have a list. What's left is the part this whole series is about: whether the loop learns anything when it runs for real. In part 5, the first real retro.
+
+---
+
+*This post was written with the help of Claude, which also ran the audit. The ten-minute test suite is all mine.*

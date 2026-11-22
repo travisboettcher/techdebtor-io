@@ -64,3 +64,7 @@ The rule I'd keep if I could only keep one is the reviewer being independent - c
 An implementer who believes a redaction pattern covers `curl -u` will write a test that agrees with it. Show the reviewer that reasoning and it starts reading the code through the same belief, and now two agents are confident about the same gap. Every reviewer catch above came from an agent that didn't know what the implementer thought it had done, so it had to look at what the code actually did.
 
 The reviewer is still Claude, with the same blind spots; independence only stops it being talked into believing what the implementer believed. Whether one reviewer is enough is another question, and the answer turned out to be a swarm of specialists. That's part 3.
+
+---
+
+*This post was written with the help of Claude. Some of the mistakes in it are Claude's own, quoted from the run record that caught them.*

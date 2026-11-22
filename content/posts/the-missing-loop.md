@@ -75,3 +75,7 @@ Nothing project-specific ever goes in the plugin, which is what let me make it p
 ### Building it with itself
 
 Which left the problem of how to build it. The answer was to use the graph to build the graph, before the graph existed. It caught more than I expected, starting with my carefully designed human gate. That's the next post.
+
+---
+
+*This post was written with the help of Claude, which also built most of the loop it describes.*

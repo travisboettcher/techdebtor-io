@@ -63,3 +63,7 @@ Issue 3's open question was whether a plugin agent could start other agents at a
 So who checks the checkers? Partly the floors, partly me at the gate, and partly the retro, which counts each specialist's **misses**: findings in its own categories that got past the whole swarm to me, CI or a hook. A specialist that never catches anything for a tag becomes a proposal to drop it; a category that keeps escaping, a proposal to add one.
 
 And when a specialist's tooling is missing, it reports BLOCKED and names what's missing rather than installing anything. That's a measurement of the repo, not the agents, and it's where part 4 picks up.
+
+---
+
+*This post was written with the help of Claude, and checked by a second agent that hadn't seen the first one's reasoning.*

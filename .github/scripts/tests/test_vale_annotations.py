@@ -120,3 +120,50 @@ def test_a_vale_error_in_any_output_fails(tmp_path, capsys):
     a.write_text(json.dumps({}))
     b.write_text(json.dumps({"Code": "E201", "Text": "bad"}))
     assert va.main([str(a), str(b)]) == 2
+
+
+def write(tmp_path, name, data):
+    p = tmp_path / name
+    p.write_text(json.dumps(data))
+    return str(p)
+
+
+def test_a_warning_from_a_strict_output_fails(tmp_path, capsys):
+    lenient = write(tmp_path, "changed.json", {"a.md": [alert(line=1)]})
+    strict = write(tmp_path, "strict.json", {"a.md": [alert(check="Repo.AITellsQuietly", line=5)]})
+    assert va.main([lenient, "--strict", strict]) == 1
+    out = capsys.readouterr().out
+    assert "::warning file=a.md,line=5,col=5,title=Repo.AITellsQuietly::" in out
+    assert "::error title=AI tells::1 alert from the strict config on new posts" in out
+
+
+def test_a_suggestion_from_a_strict_output_does_not_fail(tmp_path, capsys):
+    strict = write(tmp_path, "strict.json", {"a.md": [alert(severity="suggestion")]})
+    assert va.main(["--strict", strict]) == 0
+    assert "title=AI tells" not in capsys.readouterr().out
+
+
+def test_an_empty_strict_output_passes(tmp_path, capsys):
+    lenient = write(tmp_path, "changed.json", {"a.md": [alert()]})
+    strict = write(tmp_path, "strict.json", {})
+    assert va.main([lenient, "--strict", strict]) == 0
+
+
+def test_warnings_from_ordinary_outputs_still_pass(tmp_path, capsys):
+    lenient = write(tmp_path, "changed.json", {"a.md": [alert(), alert(line=9)]})
+    assert va.main([lenient]) == 0
+
+
+def test_the_same_alert_from_two_outputs_is_annotated_once(tmp_path, capsys):
+    # A rule in both configs (Voices.Banned) reports the same span twice on a new post.
+    same = {"a.md": [alert(check="Voices.Banned", line=2)]}
+    lenient = write(tmp_path, "changed.json", same)
+    strict = write(tmp_path, "strict.json", same)
+    assert va.main([lenient, "--strict", strict]) == 1
+    out = capsys.readouterr().out
+    assert len([l for l in out.splitlines() if l.startswith("::warning")]) == 1
+    assert "0 errors, 1 warning, 0 suggestions" in out
+
+
+def test_strict_without_a_file_is_a_usage_error(capsys):
+    assert va.main(["--strict"]) == 2

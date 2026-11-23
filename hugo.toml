@@ -8,6 +8,16 @@ pygmentsUseClasses = true
 [taxonomies]
   tag = "tags"
 
+# /llms.txt: a plain-text index of the blog for language models (layouts/index.llms.txt; https://llmstxt.org).
+[outputFormats.llms]
+  mediaType = "text/plain"
+  baseName = "llms"
+  isPlainText = true
+  notAlternative = true
+
+[outputs]
+  home = ["html", "rss", "llms"]
+
 [markup]
   [markup.highlight]
     noClasses = false

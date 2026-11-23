@@ -22,7 +22,7 @@ That matched what I'd seen building [`hll`](/posts/designing-a-language-for-a-ma
 
 ### Trust is the bottleneck
 
-Out of my work I've pieced together my own framing, which helped me place this. It's a synthesis of what I've seen, and it isn't published anywhere. Teams move through roughly five steps in how they use AI: gated, then assisted (one person, one agent), then parallel (one person, something like ten agents in their own worktrees), then supervised autonomy, then AI-native. Each step clears one bottleneck and exposes the next, and past a certain point the bottleneck stops being tooling and becomes trust. If I can't trust what ten agents hand me, I'm reviewing ten agents' worth of output by hand, and all I've gained is a backlog.
+Out of my work I've pieced together my own framing, which helped me place this. It's a synthesis of what I've seen. Teams move through roughly five steps in how they use AI: gated, then assisted (one person, one agent), then parallel (one person, something like ten agents in their own worktrees), then supervised autonomy, then AI-native. Each step clears one bottleneck and exposes the next, and past a certain point the bottleneck stops being tooling and becomes trust. If I can't trust what ten agents hand me, I'm reviewing ten agents' worth of output by hand, and all I've gained is a backlog.
 
 The framing also warns about two traps. Green checks can share the code's wrong assumptions - a test written from the same misunderstanding as the code will pass and look like evidence. And it's tempting to add more agents before the loop has earned any trust. What it says to measure is flow (review effort, escaped defects and lead time), and to ignore lines of code entirely.
 
@@ -60,11 +60,11 @@ Rules that only make sense in one repo go in that repo's `CLAUDE.md`, skills, ho
 
 ## Building it with itself
 
-The real graph didn't exist yet, so Claude built it with a version of the graph run by hand: Claude itself played the lead and started ordinary subagents for the other roles, with no plugin running the graph or writing records. The later build-out ran the same way. By then `agent-loop` was installed, but the Claude Code session doing the work had started before the install, and plugins load when a session starts, so that session never loaded it.
+The real graph didn't exist yet, so Claude built it with a version of the graph run by hand: Claude itself played the lead and started ordinary subagents for the other roles, with no plugin running the graph or writing records. The later build-out ran the same way.
 
 ### A home for it
 
-Claude's first scoping was a marketplace for just this one framework, named after me. I wanted a general one for any Claude Code plugins I end up writing, under the techdebtor name, so it became [techdebtor-plugins](https://github.com/travisboettcher/techdebtor-plugins). Both of my corrections went into the run record as findings (`scope-mismatch` and `naming`, caught by `human`). I liked that the record opened with me changing my mind.
+Claude's first scoping was a marketplace for just this one framework, named after me. I wanted a general one for any Claude Code plugins I end up writing, under the techdebtor name, so it became [techdebtor-plugins](https://github.com/travisboettcher/techdebtor-plugins). Both of my corrections went into the run record as findings (`scope-mismatch` and `naming`, caught by `human`).
 
 ### Contract first
 
@@ -108,7 +108,7 @@ All four went into [PR 2](https://github.com/travisboettcher/techdebtor-plugins/
 
 ## Who checks the checkers?
 
-Once the first version was published and installed, I shared a generic verification playbook from work, and it turned into a pile of GitHub issues. While I was offline, Claude worked through them as a chain of pull requests, each with an implementer, an independent tester and reviewer, and fixes. When the stack merged, agent-loop was at 0.3.0 and a second plugin, agent-ready, at 0.1.0.
+Once the first version was published and installed, I shared a generic verification playbook, and it turned into a pile of GitHub issues. While I was offline, Claude worked through them as a chain of pull requests, each with an implementer, an independent tester and reviewer, and fixes. When the stack merged, agent-loop was at 0.3.0 and a second plugin, agent-ready, at 0.1.0.
 
 ### A swarm, picked by risk
 

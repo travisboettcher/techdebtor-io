@@ -1,7 +1,7 @@
 ---
 title: "The Missing Loop"
 date: 2026-11-22
-draft: true
+draft: false
 tags: ["AI", "Claude Code"]
 summary: "Over a weekend I had Claude build a graph of agents that writes down its own mistakes and turns the ones that keep coming back into rules, plus an audit of how ready a repo is for agents, which I ran on one of my own."
 hero_image: "https://images.unsplash.com/photo-1687038520563-2310e8b06ed2?w=800&h=400&fit=crop&auto=format&q=80"

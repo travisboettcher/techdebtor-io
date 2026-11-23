@@ -250,7 +250,11 @@ A small example turned up while I was fact-checking this post. `CONTRIBUTING.md`
 
 The next steps are small: review the branch, record runs, run the retro again. The first verdict on `unhandled-input` and `contract-gap` will come out of that, and I'll post it.
 
-<!-- LISTENING FOOTER: owner to supply -->
+#### What am I listening to?
+
+Lately, I've been listening to **Am I Dumb?** by Leisure Hour.
+
+<iframe style="border-radius:12px" width="100%" height="152" title="Spotify Embed: Am I Dumb?" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" src="https://open.spotify.com/embed/track/4Q1FYaC20wp5O9CHuBUQDh?utm_source=oembed"></iframe>
 
 ---
 

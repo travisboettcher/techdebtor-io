@@ -1,0 +1,20 @@
+# "a loop rather than a pile of advice", "a plugin rather than a prompt". The habitual contrast: it
+# defines a thing by what it isn't. State what it is; keep the contrast only where the reader
+# would otherwise assume the other thing.
+extends: existence
+message: "Contrast: '%s'. Say what it is; drop the foil unless the reader needs it."
+level: warning
+ignorecase: true
+tokens:
+  - rather than
+
+tests:
+  - name: fires on the drafts
+    input: |
+      That's what makes it a loop rather than a pile of advice.
+    want: |
+      1:29:Repo.AITellsRatherThan:Contrast: 'rather than'. Say what it is; drop the foil unless the reader needs it.
+  - name: passes the blog's own voice
+    input: |
+      That's what makes it a loop instead of a pile of advice.
+    want: ""

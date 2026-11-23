@@ -61,5 +61,7 @@ only — it does not deploy anywhere yet.
 `.github/workflows/prose.yml` lints the Markdown with [Vale](https://vale.sh),
 tuned for the blog's casual voice: a repeated word fails the build, and a pull
 request's new or changed posts get their warnings (misspellings, inflated words)
-as annotations. See "Prose linting" in `CLAUDE.md` for running it locally,
-adding vocabulary and turning a rule off.
+as annotations. New posts and drafts are also checked with a strict config for
+AI-writing tells (`.github/vale/new-posts.ini`), and any alert from it fails the
+build. See "Prose linting" in `CLAUDE.md` for linting a draft locally, adding
+vocabulary and turning a rule off.

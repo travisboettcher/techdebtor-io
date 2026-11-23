@@ -1,0 +1,24 @@
+# Lines that announce a point instead of making it: "The second half matters more." "That rule
+# matters later." "The funny part is ...", "The clever bit isn't ...", "My favourite was ...".
+# Lowercase "matters" only, so a title ("What Matters Most") passes.
+extends: existence
+message: "Set-up: '%s'. Make the point; the reader will notice it matters."
+level: warning
+nonword: true
+tokens:
+  - '\bmatters? (?:more|most|less|later|here)\b'
+  - '(?i)\bthe (?:funny|nasty|clever|interesting|scary|uncomfortable|tricky|real|important|surprising|annoying|ironic) (?:part|bit|thing)\b'
+  - '(?i)\bmy favou?rite (?:kind|part|bit|was|one)\b'
+  - '(?i)\bthe one I like best\b'
+
+tests:
+  - name: fires on the drafts
+    input: |
+      The second half matters more. The funny part is that it worked.
+    want: |
+      1:17:Repo.AITellsSetUp:Set-up: 'matters more'. Make the point; the reader will notice it matters.
+      1:31:Repo.AITellsSetUp:Set-up: 'The funny part'. Make the point; the reader will notice it matters.
+  - name: passes the blog's own voice
+    input: |
+      My favorite math subject was topology. What Matters Most is a good song.
+    want: ""

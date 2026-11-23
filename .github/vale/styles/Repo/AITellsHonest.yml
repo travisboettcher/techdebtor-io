@@ -1,0 +1,21 @@
+# "Here's the honest version." "That's the honest answer." Labelling a statement honest implies the
+# others weren't. "If I'm honest" (an aside about yourself) passes.
+extends: existence
+message: "'%s': calling one statement honest undercuts the rest. Just say it."
+level: warning
+ignorecase: true
+tokens:
+  - 'the honest (?:version|answer|truth|take|part|thing|reason|summary)'
+  - 'to be (?:totally |completely )?honest'
+  - 'in all honesty'
+
+tests:
+  - name: fires on the drafts
+    input: |
+      Here's the honest version.
+    want: |
+      1:8:Repo.AITellsHonest:'the honest version': calling one statement honest undercuts the rest. Just say it.
+  - name: passes the blog's own voice
+    input: |
+      If I'm honest, mentoring is hard for me.
+    want: ""

@@ -11,8 +11,9 @@ given; a download is saved there), checked against its sha256, checked for
 members that would land outside the StylesPath, symlinks and size, and only
 then unpacked. A style package (Name/Rule.yml) lands in <styles>/Name/; a
 config package (Name/styles/... beside a .vale.ini) contributes only its
-styles/ directory, as `vale sync` would; its .vale.ini is not used:
-.vale.ini at the repository root is the whole configuration.
+styles/ directory, as `vale sync` would; its .vale.ini is not used: the
+repository's own .vale.ini and .github/vale/new-posts.ini are the whole
+configuration.
 
 <styles>/.vale-packages.json records the pins and the files installed, so a
 second run with the same pins does nothing, and a new pin removes the old

@@ -47,39 +47,78 @@ jobs:
           tar -xzf "$dir/vale.tar.gz" -C "$dir" vale
           echo "$dir" >> "$GITHUB_PATH"
       - name: Install the Vale packages
-        # Voices, proselint, Prompts and Std: each a versioned release zip, checked against the sha256
-        # pinned in .github/vale/packages.json before it is unpacked into the StylesPath.
+        # Voices (with its Human, Direct and other voices), proselint, Prompts and Std: each a
+        # versioned release zip, checked against the sha256 pinned in .github/vale/packages.json
+        # before it is unpacked into the StylesPath.
         run: python3 .github/scripts/vale_packages.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.15"
+      - name: Check the AI-tell rules still fire
+        # Each Repo rule's own cases (a sentence from the agent-written drafts that it must flag, one
+        # from the blog's own posts that it must pass; --coverage fails a rule that flags nothing),
+        # then the strict config over a fixture full of tells and a fixture of the blog's own prose.
+        env:
+          VALE_REQUIRED: "1"
+        run: |
+          set -euo pipefail
+          vale test --coverage .github/vale/styles/Repo
+          python -m pip install pytest==9.2.0
+          python -m pytest -q -p no:cacheprovider .github/scripts/tests/test_strict_config.py
       - name: Run Vale
-        # Two levels, one report. Markdown files a pull request adds or changes are linted at warning
-        # level, so a new post's misspellings and inflated words show up as annotations on it; every
-        # other file is linted at error level only, so the archive's old style warnings stay quiet.
-        # Only errors fail the job, wherever they are. On a push to main every file is at error level.
+        # Two configs, two levels, one report. Markdown files a pull request adds or changes are
+        # linted with .vale.ini at warning level, so a new post's misspellings and inflated words
+        # show up as annotations on it; every other file is linted at error level only, so the
+        # archive's old style warnings stay quiet. New posts (posts the pull request adds, and drafts
+        # it edits or publishes: `draft: true` on the base branch) are also linted with the strict
+        # config, .github/vale/new-posts.ini, for AI-writing tells. Errors fail the job wherever they
+        # are, and so does any warning from the strict config. On a push to main every file is at
+        # error level and the strict config does not run: what merged was already checked.
         # Relative paths from the repository root: .vale.ini's globs pick each file's rules by path.
         run: |
           set -uo pipefail
           vale --version
+          is_draft() {  # front matter (YAML or TOML) on stdin says draft: true
+            awk 'NR == 1 { if ($0 !~ /^(---|\+\+\+)[[:space:]]*$/) exit; next }
+                 /^(---|\+\+\+)[[:space:]]*$/ { exit }
+                 /^draft[[:space:]]*[:=][[:space:]]*true[[:space:]]*$/ { d = 1 }
+                 END { exit !d }'
+          }
           mapfile -d '' files < <(git ls-files -z '*.md')
           declare -A changed=()
+          strict=()
           if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
-            mapfile -d '' diff < <(git diff -z --name-only --diff-filter=d HEAD^1 HEAD -- '*.md')
-            for f in "${diff[@]}"; do changed["$f"]=1; done
+            mapfile -d '' diff < <(git diff -z --name-only --no-renames --diff-filter=d HEAD^1 HEAD -- '*.md')
+            for f in "${diff[@]}"; do
+              changed["$f"]=1
+              case "$f" in content/posts/*.md) ;; *) continue ;; esac
+              if ! base=$(git show "HEAD^1:$f" 2>/dev/null); then
+                strict+=("$f")  # added by this pull request
+              elif is_draft <<< "$base"; then
+                strict+=("$f")  # a draft on the base branch
+              fi
+            done
           fi
           new=() old=()
           for f in "${files[@]}"; do
             if [ -n "${changed[$f]:-}" ]; then new+=("$f"); else old+=("$f"); fi
           done
-          echo "Linting ${#new[@]} changed file(s) at warning level, ${#old[@]} at error level."
-          lint() {  # lint <level> <out.json> <files...>
-            local level=$1 out=$2
-            shift 2
+          echo "Linting ${#new[@]} changed file(s) at warning level, ${#old[@]} at error level," \
+            "${#strict[@]} new post(s) with the strict config."
+          lint() {  # lint <level> <out.json> <config> <files...>; no files: an empty report
+            local level=$1 out=$2 config=$3
+            shift 3
             if [ "$#" -eq 0 ]; then echo '{}' > "$out"; return 0; fi
-            vale --minAlertLevel="$level" --output=JSON --no-exit "$@" > "$out" 2> "$RUNNER_TEMP/vale.err"
+            vale --config="$config" --minAlertLevel="$level" --output=JSON --no-exit "$@" \
+              > "$out" 2> "$RUNNER_TEMP/vale.err"
           }
           status=0
-          lint warning "$RUNNER_TEMP/changed.json" "${new[@]}" || status=$?
+          lint warning "$RUNNER_TEMP/changed.json" .vale.ini "${new[@]}" || status=$?
           if [ "$status" -eq 0 ]; then
-            lint error "$RUNNER_TEMP/site.json" "${old[@]}" || status=$?
+            lint error "$RUNNER_TEMP/site.json" .vale.ini "${old[@]}" || status=$?
+          fi
+          if [ "$status" -eq 0 ]; then
+            lint warning "$RUNNER_TEMP/strict.json" .github/vale/new-posts.ini "${strict[@]}" || status=$?
           fi
           if [ "$status" -ne 0 ]; then
             # Vale itself failed (configuration or runtime error): its error is JSON on stderr.
@@ -88,4 +127,5 @@ jobs:
             echo "::error title=Vale::Vale exited $status before linting; see its error above"
             exit 1
           fi
-          python3 .github/scripts/vale_annotations.py "$RUNNER_TEMP/changed.json" "$RUNNER_TEMP/site.json"
+          python3 .github/scripts/vale_annotations.py "$RUNNER_TEMP/changed.json" "$RUNNER_TEMP/site.json" \
+            --strict "$RUNNER_TEMP/strict.json"

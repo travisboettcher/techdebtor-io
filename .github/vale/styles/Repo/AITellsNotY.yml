@@ -1,0 +1,23 @@
+# The corrective ending: "What's worth measuring is flow, not output." "a promise the code has to
+# keep, not a label." And the "isn't X, it's Y" reversal: "The clever bit isn't the pools, it's the
+# choosing." Narrower than Voices.BinaryContrast, which also flags this blog's "it's not that
+# unique, but hey".
+extends: existence
+message: "Binary contrast: '%s'. State the true half; drop the straw man."
+level: warning
+nonword: true
+tokens:
+  - ',\snot (?:just |only |by |the |a |an |in |for |to |as )?[\w''’ -]{1,30}(?=[.;)])'
+  - '(?i)\b(?:is|was|are|were)(?:n[''’]t| not) (?:just |only )?[^\n,.;]{1,30}?[,;] (?:it|they)(?:[''’]s|[''’]re| is| was| are| were)\b'
+
+tests:
+  - name: fires on the drafts
+    input: |
+      What's worth measuring is flow, not output. The clever bit isn't the pools, it's the choosing.
+    want: |
+      1:31:Repo.AITellsNotY:Binary contrast: ', not output'. State the true half; drop the straw man.
+      1:60:Repo.AITellsNotY:Binary contrast: 'isn't the pools, it's'. State the true half; drop the straw man.
+  - name: passes the blog's own voice
+    input: |
+      Let me tell you a story - it's not that unique, but hey, this is my blog!
+    want: ""

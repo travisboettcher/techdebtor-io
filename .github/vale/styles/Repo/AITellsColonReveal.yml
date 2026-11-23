@@ -1,0 +1,23 @@
+# The set-up and reveal: "The verdict: step 0." "The fix: remove only what you started." "Fun
+# detail: the records ...". Narrower than Voices.ColonReveal, which also flags this blog's own
+# "One last note: ..." and "The problem: ...", and list labels: only a sentence that opens with a
+# reveal noun, a colon and a lowercase continuation.
+extends: existence
+message: "Colon reveal: '%s'. Say it as a plain sentence, without the drum roll."
+level: warning
+scope: sentence
+nonword: true
+tokens:
+  - '^(?:The|My|One|Fun|Funny|Small|Nice) (?:\w+ )?(?:answer|verdict|fix|evidence|result|lesson|rule|catch|twist|upshot|takeaway|point|irony|kicker|trick|difference|version|part|bit|detail|favou?rite|surprise)(?: (?:is|was) \w+)?:(?= [a-z0-9])'
+  - '^(?:Fun|Funny|Small|Nice|Bonus) (?:detail|fact|aside):(?= )'
+
+tests:
+  - name: fires on the drafts
+    input: |
+      The verdict: step 0, gated.
+    want: |
+      1:1:Repo.AITellsColonReveal:Colon reveal: 'The verdict:'. Say it as a plain sentence, without the drum roll.
+  - name: passes the blog's own voice
+    input: |
+      The problem: you can only reach the service by its port. One last note: the repository moved.
+    want: ""

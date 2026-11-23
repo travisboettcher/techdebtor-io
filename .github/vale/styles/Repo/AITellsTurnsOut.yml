@@ -1,0 +1,19 @@
+# The reveal verb: "which turned out to be more useful than a citation", "the answer turned out to
+# be a swarm of specialists". Say what it is. The blog's own "As it turns out, ..." passes.
+extends: existence
+message: "Reveal: '%s'. Say what it is or what happened, without the suspense."
+level: warning
+ignorecase: true
+tokens:
+  - 'turn(?:s|ed) out to (?:be|have)'
+
+tests:
+  - name: fires on the drafts
+    input: |
+      What it could do was explain the idea, which turned out to be more useful.
+    want: |
+      1:46:Repo.AITellsTurnsOut:Reveal: 'turned out to be'. Say what it is or what happened, without the suspense.
+  - name: passes the blog's own voice
+    input: |
+      As it turns out, there is a library for that. The render turned out really well.
+    want: ""

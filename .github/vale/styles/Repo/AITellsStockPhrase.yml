@@ -1,0 +1,34 @@
+# Stock phrases from the agent-written drafts that this blog's own posts don't use: "says it
+# plainly", "in so many words", "is doing a lot of work", "with extra steps", "in miniature",
+# "None of this is news.".
+extends: existence
+message: "Stock phrase: '%s'. Say it in your own words, or cut it."
+level: warning
+ignorecase: true
+nonword: true
+tokens:
+  - '\b(?:say|says|said|put) (?:it|that|so) plainly\b'
+  - '\bin so many words\b'
+  - '\bdoing a lot of (?:work|heavy lifting)\b'
+  - '\bwith extra steps\b'
+  - '\bfor the record\b'
+  - '\bin miniature\b'
+  - '\bfor real\b'
+  - '\bworth (?:mentioning|saying|pointing out|remembering)\b'
+  - '\bthe whole point\b'
+  - '\bin a nutshell\b'
+  - '\bmake no mistake\b'
+  - '\bneedless to say\b'
+  - '\blet that sink in\b'
+  - '(?:^|(?<=[.!?]\s))None of (?:this|these|that|it) (?:is|are|was|were|has|matters)\b'
+
+tests:
+  - name: fires on the drafts
+    input: |
+      Issue 3 says it plainly: every new check makes one prompt longer.
+    want: |
+      1:9:Repo.AITellsStockPhrase:Stock phrase: 'says it plainly'. Say it in your own words, or cut it.
+  - name: passes the blog's own voice
+    input: |
+      To be fair, it has been a busy semester.
+    want: ""

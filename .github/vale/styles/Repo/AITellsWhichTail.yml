@@ -1,0 +1,22 @@
+# The aphorism tail: ", which is rather the point." ", which is exactly where ...". And its
+# fragment form, a sentence that starts with "Which": "Which left the problem of how to build it."
+# A plain relative clause (", which is the default network") passes.
+extends: existence
+message: "Aphorism tail: '%s'. End the sentence on the fact; let the reader draw the moral."
+level: warning
+nonword: true
+tokens:
+  - ',\s(?:which|and that)(?:[''’]s| is| was) (?:rather |exactly |precisely |really |just )?(?:what|where|why|how|the (?:point|whole point|idea|lesson|irony|trick|catch|most|best|kind|sort))\b'
+  - '(?:^|(?<=[.!?]\s))Which (?:is|was|left|leaves|means|meant|brings|brought|made|makes)\b'
+
+tests:
+  - name: fires on the drafts
+    input: |
+      There's a fix now, made by hand, which is rather the point. Which left the problem of how to build it.
+    want: |
+      1:32:Repo.AITellsWhichTail:Aphorism tail: ', which is rather the point'. End the sentence on the fact; let the reader draw the moral.
+      1:61:Repo.AITellsWhichTail:Aphorism tail: 'Which left'. End the sentence on the fact; let the reader draw the moral.
+  - name: passes the blog's own voice
+    input: |
+      Each service joins the proxy network, which is the default network created for the service.
+    want: ""

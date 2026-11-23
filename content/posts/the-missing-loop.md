@@ -86,7 +86,7 @@ One redaction pattern started a fresh scan at every word boundary inside a long 
 
 ### The human gate was a sentence
 
-The human gate was written into the retro skill's instructions in plain English, and the same skill pre-approved `Write`, `Edit` and every `git` command. Writes and commits would never have reached a permission prompt. My gate amounted to a sentence asking the agent to please stop.
+The human gate was written into the retro skill's instructions in plain English, and the same skill pre-approved `Write`, `Edit` and every `git` command. Writes and commits would never have reached a permission prompt. My gate amounted to a sentence asking the agent to please stop (pretty please).
 
 There was more than one of these. Removing that pre-approval left one for the miner script by a wildcard path, which would also have pre-approved a script of the same name planted in any repo I cloned (that one the record marks as caught by `self`). The "read-only" `git diff`, `git log` and `git show` patterns allowed `--output=`, and `--output=` writes files. In all there were three separate `over-broad-pre-approval` findings in one build.
 
@@ -184,13 +184,13 @@ The same tests caught a real bug in the skill. With `--json`, the output is supp
 
 ### Pointing it at pip-world
 
-The first target was [pip-world](https://github.com/travisboettcher/pip-world), the engine behind Pip, my autonomous-agent experiment. The repo came out at step 0, gated, on a technicality.
+The first target was [pip-world](https://github.com/travisboettcher/pip-world), the engine behind Pip, my autonomous-agent experiment. The repo came out at step 0, gated.
 
-Every item on the gate from 0 to 1 was met except "no secrets in the tree", which came back `unknown`. Nothing in the repo scans for secrets. GitHub's own secret scanning and push protection are turned on for it, but that's a setting the audit couldn't see from the files, so it scored the item unknown, and unknown never counts as met. The report pointed out that one secret scan would settle it and put the repo at step 1.
+Every item on the gate from 0 to 1 was met except "no secrets in the tree", which came back `unknown`. Nothing in the repo scans for secrets. GitHub's own secret scanning and push protection are turned on for it, but that's a setting the audit couldn't see from the files, so it scored the item unknown, and unknown never counts as met. So step 0 it is - on a technicality! The report pointed out that one secret scan would settle it and put the repo at step 1.
 
 The bigger problem is the next gate. Among the things the audit measured:
 
-- One timed run of the test suite took 10 min 9 s for 2,612 passing tests. `CLAUDE.md`, the file agents read to learn how to work in the repo, says "~15 s". CI is worse, at 15 to 21 minutes per run - one PR run took 15.4 minutes, and the last 15 pushes to main took between 15.6 and 21.0.
+- One timed run of the test suite took 10 min 9 s for 2,612 passing tests. `CLAUDE.md`, the file agents read to learn how to work in the repo, says "~15 s". I honestly don't know when it got that slow. CI is worse, at 15 to 21 minutes per run - one PR run took 15.4 minutes, and the last 15 pushes to main took between 15.6 and 21.0.
 - There's no lint and no type checker, in CI or anywhere else.
 - My own pushes skip the required checks. Six test jobs and the image build are required on `main`, but admin enforcement is off, and only 1 of 199 commits on main came through a pull request. The branch protection is a nice fence with a gate I walk straight through.
 - Two flaky, date-dependent tests turned main red on 2026-11-19. The fix was the one commit that came through a pull request.

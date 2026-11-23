@@ -4,6 +4,7 @@ date: 2026-11-22
 draft: true
 tags: ["AI", "Claude Code"]
 summary: "Over a weekend I had Claude build a graph of agents that writes down its own mistakes and turns the ones that keep coming back into rules, plus an audit of how ready a repo is for agents, which I ran on one of my own."
+hero_image: "https://images.unsplash.com/photo-1687038520563-2310e8b06ed2?w=800&h=400&fit=crop&auto=format&q=80"
 ---
 
 This one started with a phrase I'd heard secondhand: that some engineers at Anthropic work with a "self-improving graph of agents." I didn't know what that meant, but it sounded like something I'd want, so early one Saturday in November I asked Claude. The first thing it did was say it couldn't verify that this was anybody's best practice. What it could do was explain what the idea would have to mean. An explanation isn't evidence, so the only way to find out whether any of it held up was to build it and see.

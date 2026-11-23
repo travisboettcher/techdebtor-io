@@ -4,7 +4,11 @@
 
      og:image has to be an absolute URL. Hero images already are
      (Unsplash), and the w/h are rewritten from the 800x400 the page
-     renders to the 1200x630 the social scrapers want. */}}
+     renders to the 1200x630 the social scrapers want.
+
+     auto=format makes Unsplash pick WebP or AVIF from the Accept header,
+     and LinkedIn's scraper gets WebP, which it won't show. The social
+     image asks for a JPEG instead (fm=jpg); the page keeps auto=format. */}}
 
 {{- $title := cond .IsHome .Site.Title (printf "%s · %s" .Title .Site.Title) -}}
 {{- $desc := cond .IsHome .Site.Params.description (.Summary | plainify | truncate 200) -}}
@@ -12,6 +16,10 @@
 {{- $image := "" -}}
 {{- with .Params.hero_image -}}
   {{- $image = replaceRE `w=\d+&h=\d+` "w=1200&h=630" . -}}
+  {{- if in $image "images.unsplash.com" -}}
+    {{- $image = replaceRE `(^|[?&])(auto=format|fm=[a-z]+)(&|$)` "$1" $image | replaceRE `[?&]$` "" -}}
+    {{- $image = printf "%s%sfm=jpg" $image (cond (in $image "?") "&" "?") -}}
+  {{- end -}}
 {{- else -}}
   {{- with .Site.Params.ogImage -}}{{- $image = absURL . -}}{{- end -}}
 {{- end }}

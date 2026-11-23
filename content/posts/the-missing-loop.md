@@ -36,6 +36,8 @@ My homelab already had the loop, done by hand. When something goes wrong there, 
 
 ### The design
 
+{{< xchart "agent-loop" >}}
+
 Every run of the installed `/agent-loop:lead` writes a run record - a small YAML file in the repo's `.claude/runs/`, which is normally left out of git - listing each mistake any stage caught: what went wrong, its category, how bad it was and which agent caught it. For a session that didn't go through the lead, `/agent-loop:retro --record` writes one after the fact. The categories come from a catalog, so that "the same mistake" means something a script can count.
 
 A separate retro skill reads those records (and my ordinary session transcripts) looking for what keeps going wrong, and proposes the cheapest rule that would stop each recurring mistake. The rules sit on a promotion ladder, though it isn't a straight climb. A mistake seen once stays a note. One that recurs becomes an instruction. If it keeps coming back after that, it moves to whichever kind of enforcement fits how it can be detected:
@@ -45,6 +47,8 @@ A separate retro skill reads those records (and my ordinary session transcripts)
 - `check`: spotting it needs judgment, and the judgment can be written down as a procedure for a verifier to follow.
 - `hook`: a script can spot it, so a hook or CI check blocks it.
 - `test`: the mistake is in the code's behavior, so a test or evaluation fails on it.
+
+{{< xchart "promotion-ladder" >}}
 
 Every rule starts as an instruction because telling the agent is cheap. My guess, from experience more than data, is that telling alone often won't be enough, and the rungs above it are there for when it isn't.
 
@@ -144,7 +148,7 @@ None of this helps if the repo's own checks are junk, and the second plugin, `ag
 
 `/agent-ready:audit` is read-only, and every report leads with one sentence saying which adoption step the repo can support today and what its bottleneck is. Those are the five steps from earlier, numbered from 0 (gated) to 4 (AI-native), and the rubric writes down the gate between each pair as evidence. Going from step 1 to 2, for example, needs tests, types and lint that run on every pull request and block merge, a suite fast enough to run per change, and no flakiness.
 
-Every layer (tests, types, coverage, mutation testing, contract tests, secret scanning, `CLAUDE.md` and the rest, 17 in all) gets the same four questions. Does it exist? Is it in CI? Does it block a merge? Is it measured?
+Every layer (tests, types, coverage, mutation testing, contract tests, secret scanning, `CLAUDE.md` and the rest) gets the same four questions. Does it exist? Is it in CI? Does it block a merge? Is it measured?
 
 Each answer has to cite evidence, and the rubric is blunt about weak evidence: "A file merely existing is weak evidence and is scored that way." When the evidence isn't there, the answer is `unknown`, and `unknown` never counts as met. Fixes are ranked by the gate they move and the flow metric they should improve, never by lines of code or number of agents.
 
@@ -169,6 +173,8 @@ The same tests caught a real bug in the skill. With `--json`, the output is supp
 ### Pointing it at pip-world
 
 The first target was [pip-world](https://github.com/travisboettcher/pip-world), the engine behind Pip, my autonomous-agent experiment. The repo came out at step 0, gated.
+
+{{< xchart "pip-world-layers" >}}
 
 Every item on the gate from 0 to 1 was met except "no secrets in the tree", which came back `unknown`. Nothing in the repo scans for secrets. GitHub's own secret scanning and push protection are turned on for it, but that's a setting the audit couldn't see from the files, so it scored the item `unknown`, and `unknown` never counts as met. So step 0 it is - on a technicality! The report pointed out that one secret scan would settle it and put the repo at step 1.
 

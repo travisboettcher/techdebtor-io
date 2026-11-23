@@ -588,6 +588,19 @@ time {
 }
 .xd figcaption { text-align: center; }
 
+/* Flow diagrams (scripts/agent-loop-figures/diagram.py) */
+.xd .xd-box { fill: var(--bg); stroke: var(--muted); stroke-width: 1; }
+.xd .xd-gate { stroke: var(--chart-mark); stroke-width: 2; }
+.xd .xd-arrow { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.xd .xd-arrow-head { fill: var(--muted); }
+.xd .xd-loop { fill: none; stroke: var(--chart-mark); stroke-width: 2.5; }
+.xd .xd-loop-head { fill: var(--chart-mark); }
+.xd .xd-yes { fill: var(--chart-mark); }
+.xd .xd-partial { fill: var(--xw-unchecked); stroke: var(--chart-mark); stroke-width: 1; }
+.xd .xd-no { fill: none; stroke: var(--muted); stroke-width: 1; }
+.xd text.xd-on-fill { fill: var(--xw-ink); }
+.xd text.xd-sym { font-size: 15px; font-weight: 700; }
+
 /* Markdown tables in posts */
 .post-content table {
   border-collapse: collapse;

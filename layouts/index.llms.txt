@@ -1,0 +1,18 @@
+{{- /* /llms.txt: a plain-text index of the blog for language models (https://llmstxt.org): what the site is, then every post with a short summary, newest first. */ -}}
+# {{ site.Title }}
+
+> {{ site.Params.description }}
+
+The blog of {{ site.Params.author }}: home labs, side projects, building software with AI agents, and food. Every post below is a full HTML page; the [RSS feed]({{ "index.xml" | absURL }}) has them all too.
+
+## Posts
+
+{{ range where site.RegularPages "Section" "posts" -}}
+- [{{ .Title }}]({{ .Permalink }}): {{ .Date.Format "2 January 2006" }}. {{ .Summary | plainify | htmlUnescape | replaceRE `\s+` " " | strings.TrimSpace | truncate 240 }}
+{{ end }}
+## Optional
+
+{{ with site.GetPage "/about" }}- [About]({{ .Permalink }}): who writes this blog.
+{{ end -}}
+{{ with site.GetPage "/privacy" }}- [Privacy]({{ .Permalink }}): what the site collects.
+{{ end -}}

@@ -16,7 +16,7 @@ By Sunday morning there was a public plugin repo, and the system had run its fir
 
 The model doesn't get better between my sessions. If a graph of agents is going to improve itself, the improvement has to live in the things the next run reads before it starts: `CLAUDE.md`, skills, memory, hooks and tests.
 
-Claude's second point was that an improvement only sticks where something can check it, like a test that fails when the mistake comes back. I see the two halves of that a little differently. My intuition is that separate agents catch different things, where one agent running everything mostly agrees with itself. A verifier adds something else: it makes the check deterministic. A test fails the same way every time, whichever agent is looking.
+Claude's second point was that an improvement only sticks where something can check it, like a test that fails when the mistake comes back. That kind of check is deterministic - it fails the same way every time, whichever agent is looking.
 
 That matched what I'd seen building [`hll`](/posts/designing-a-language-for-a-machine-to-write/). A compiler that answered back did more for the agents writing my homelab config than anything I put in a spec.
 
@@ -102,7 +102,7 @@ All four went into [PR 2](https://github.com/travisboettcher/techdebtor-plugins/
 
 ### Why the reviewer doesn't see the reasoning
 
-The reviewer never sees how the implementer reasoned, only the diff and the criteria. An implementer who believes a redaction pattern covers `curl -u` will write a test that agrees with it. Show the reviewer that reasoning and it starts reading the code through the same belief, and then two agents are confident about the same gap. Every reviewer catch above came from an agent that didn't know what the implementer thought it had done, so it had to look at what the code did. It's still Claude, with the same blind spots - it just isn't starting from what the implementer assumed.
+The reviewer never sees how the implementer reasoned, only the diff and the criteria. My intuition is that separate agents catch different things, and one agent running everything mostly agrees with itself. An implementer who believes a redaction pattern covers `curl -u` will write a test that agrees with it. Show the reviewer that reasoning and it starts reading the code through the same belief, and then two agents are confident about the same gap. Every reviewer catch above came from an agent that didn't know what the implementer thought it had done, so it had to look at what the code did. It's still Claude, with the same blind spots - it just isn't starting from what the implementer assumed.
 
 ## Who checks the checkers?
 
